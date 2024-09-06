@@ -5,7 +5,7 @@
 
 ```
 git clone 
-cd bike-rental-reservation-system-backend
+cd express-typescript-server-template
 npm install
 ```
 
@@ -31,7 +31,7 @@ JWT_REFRESH_EXPIRES_IN=365d
 
 - Live Deployment Link (Server): <a href="https://bike-rental-reservation-system-server-seven.vercel.app" target="_blank">https://bike-rental-reservation-system-server-seven.vercel.app</a>
 
-- GitHub Repository Links (Server): <a href="https://bike-rental-reservation-system-server-seven.vercel.app" target="_blank">https://github.com/mdshohed/bike-rental-reservation-system-backend</a>
+- GitHub Repository Links (Server): <a href="https://bike-rental-reservation-system-server-seven.vercel.app" target="_blank">https://github.com/mdshohed/express-typescript-server-template</a>
 
 - Project Overview Video:   <a href="https://bike-rental-reservation-system-server-seven.vercel.app" target="_blank">https://youtu.be/RgKtffKd73Y</a>
 

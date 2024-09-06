@@ -22,7 +22,7 @@ const test = async (req: Request, res: Response) => {
 
 app.get("/", (req: Request, res: Response) => {
   res.status(404).json({
-    message: "Welcome to sporting-goods-server",
+    message: "Welcome to express-typescript-server",
   });
 });
 
