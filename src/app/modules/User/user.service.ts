@@ -1,55 +1,35 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { User } from "./user.model";
-import config from "../../config";
-import httpStatus from "http-status";
-import AppError from "../../errors/AppError";
-import { TUser } from "./user.interface";
+import { QueryBuilder } from '../../builder/QueryBuilder';
+import { UserSearchableFields } from './user.constant';
+import { TUser } from './user.interface';
+import { User } from './user.model';
 
-const getProfileFromDB = async (token: string) => {
-  // checking if the given token is valid
-  const decoded = jwt.verify(
-    token,
-    config.jwt_refresh_secret as string,
-  ) as JwtPayload;
+const createUser = async (payload: TUser) => {
+  const user = await User.create(payload);
 
-  const { userEmail } = decoded;
-
-  // checking if the user is exist
-  const user = await User.isUserExistsByCustomEmail(userEmail);
-
-  if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, "This user is not found !");
-  }
   return user;
 };
 
-const updateProfileIntoDB = async (token: string, payload: Partial<TUser>) => {
-  // checking if the given token is valid
+const getAllUsersFromDB = async (query: Record<string, unknown>) => {
+  const users = new QueryBuilder(User.find(), query)
+    .fields()
+    .paginate()
+    .sort()
+    .filter()
+    .search(UserSearchableFields);
 
-  const decoded = jwt.verify(
-    token,
-    config.jwt_refresh_secret as string,
-  ) as JwtPayload;
+  const result = await users.modelQuery;
 
-  const { userEmail } = decoded;
-
-  // checking if the user is exist
-  const user = await User.isUserExistsByCustomEmail(userEmail);
-
-  if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, "This user is not found !");
-  }
-  const filter = { email: userEmail };
-
-  // const result = await User.findByIdAndUpdate(filter, payload, {
-  const result = await User.findOneAndUpdate(filter, payload, {
-    new: true,
-    runValidators: true,
-  });
   return result;
 };
 
+const getSingleUserFromDB = async (id: string) => {
+  const user = await User.findById(id);
+
+  return user;
+};
+
 export const UserServices = {
-  getProfileFromDB,
-  updateProfileIntoDB,
+  createUser,
+  getAllUsersFromDB,
+  getSingleUserFromDB,
 };

@@ -1,34 +1,46 @@
-import httpStatus from "http-status";
-import catchAsync from "../../utils/catchAsync";
-import sendResponse from "../../utils/sendResponse";
-import { UserServices } from "./user.service";
+import httpStatus from 'http-status';
+import { catchAsync } from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
+import { UserServices } from './user.service';
+import { log } from 'handlebars/runtime';
 
-const getProfile = catchAsync(async (req, res) => {
-  const { refreshToken } = req.cookies;
-
-  const result = await UserServices.getProfileFromDB(refreshToken);
+const userRegister = catchAsync(async (req, res) => {
+  console.log(req.body);
+  
+  const user = await UserServices.createUser(req.body);
 
   sendResponse(res, {
-    statusCode: httpStatus.OK,
     success: true,
-    message: "User profile retrieved successfully",
-    data: result,
+    statusCode: httpStatus.OK,
+    message: 'User Created Successfully',
+    data: user,
   });
 });
 
-const updateProfile = catchAsync(async (req, res) => {
-  const { refreshToken } = req.cookies;
-  const result = await UserServices.updateProfileIntoDB(refreshToken, req.body);
+const getAllUsers = catchAsync(async (req, res) => {
+  const users = await UserServices.getAllUsersFromDB(req.query);
 
   sendResponse(res, {
-    statusCode: httpStatus.OK,
     success: true,
-    message: "Rental created successfully",
-    data: result,
+    statusCode: httpStatus.OK,
+    message: 'Users Retrieved Successfully',
+    data: users,
+  });
+});
+
+const getSingleUser = catchAsync(async (req, res) => {
+  const user = await UserServices.getSingleUserFromDB(req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'User Retrieved Successfully',
+    data: user,
   });
 });
 
 export const UserControllers = {
-  getProfile,
-  updateProfile,
+  getSingleUser,
+  userRegister,
+  getAllUsers,
 };

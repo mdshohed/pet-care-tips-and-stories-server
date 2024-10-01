@@ -1,21 +1,35 @@
-import express from "express";
-import validateRequest from "../../middlewares/validateRequest";
-import { AuthValidation } from "./auth.validation";
-import { AuthControllers } from "./auth.controller";
-import { createUserValidationSchema } from "../User/user.validation";
+import express from 'express';
+import auth from '../../middlewares/auth';
+import validateRequest from '../../middlewares/validateRequest';
+import { USER_ROLE } from '../User/user.constant';
+import { AuthControllers } from './auth.controller';
+import { AuthValidation } from './auth.validation';
+import { validateRequestCookies } from '../../middlewares/validateRequest copy';
 
 const router = express.Router();
 
 router.post(
-  "/signup",
-  validateRequest(createUserValidationSchema),
-  AuthControllers.signUpUser,
+  '/register',
+  // validateRequest(AuthValidation.registerValidationSchema),
+  AuthControllers.registerUser
+);
+router.post(
+  '/login',
+  validateRequest(AuthValidation.loginValidationSchema),
+  AuthControllers.loginUser
 );
 
 router.post(
-  "/login",
-  validateRequest(AuthValidation.loginValidationSchema),
-  AuthControllers.loginUser,
+  '/change-password',
+  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
+  validateRequest(AuthValidation.changePasswordValidationSchema),
+  AuthControllers.changePassword
+);
+
+router.post(
+  '/refresh-token',
+  validateRequestCookies(AuthValidation.refreshTokenValidationSchema),
+  AuthControllers.refreshToken
 );
 
 export const AuthRoutes = router;
