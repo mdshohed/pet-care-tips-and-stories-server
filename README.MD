@@ -1,526 +1,201 @@
+# **Project Setup and Configuration Guide**
 
-### How to run this project
+## **Description**
 
-- first of all clone this project from github. Then go to project path and install npm package.
+This guide provides a detailed step-by-step process to clone, install, configure, and run the project. It covers everything from setting up environment variables, including database URI, Cloudinary account, and Gmail app password, to running the project in development and production modes. Follow these instructions to seamlessly get your project up and running.
 
+---
+
+# Installation Guide
+
+## **1. Clone the Project Repository**
+
+First, you need to clone the project repository from your version control platform (e.g., GitHub, GitLab).
+
+Open your terminal and execute the following command:
+
+```bash
+git clone https://github.com/mdshohed/express-typescript-mongoose-server-template.git
 ```
-git clone 
-cd express-typescript-server-template
+
+## **2. Navigate to the Project Directory**
+
+Once the repository is cloned, navigate to the project directory:
+
+```bash
+cd express-typescript-mongoose-server-template
+```
+
+## **3. Install All Packages**
+
+Next, install all the required dependencies listed in the `package.json` file. You can use either Yarn or npm:
+
+with **npm**:
+
+```bash
 npm install
 ```
 
-- Next, You will need to setup .env file where you have to setup this process config file: 
+This command will install all the necessary packages.
 
-```
-NODE_ENV=development 
-PORT=5000
-DATABASE_URL=database url
-BCRYPT_SALT_ROUNDS=10
-DEFAULT_PASS=usingYourPassword
-JWT_ACCESS_SECRET=yourSecretKey
-JWT_REFRESH_SECRET=yourSecretKey
-JWT_ACCESS_EXPIRES_IN=1d
-JWT_REFRESH_EXPIRES_IN=365d
+## **4. Configure Environment Variables**
+
+### **4.1 Rename the `.env.example` File**
+
+The project includes an `.env.example` file that contains example environment variables. Rename this file to `.env`:
+
+```bash
+mv .env.example .env
 ```
 
-- To Start this project. you have run npm command: `npm run start:dev`
+This will create a `.env` file where you will store your actual environment variables.
 
+### **4.2 Retrieve the MongoDB Connection URI**
 
-### Link: 
-<div >
+Since you already have a MongoDB cluster and user set up, retrieve the connection string from MongoDB Atlas:
 
-- Live Deployment Link (Server): <a href="https://bike-rental-reservation-system-server-seven.vercel.app" target="_blank">https://bike-rental-reservation-system-server-seven.vercel.app</a>
+1. **Log in to MongoDB Atlas:**
+   - Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) and log in with your credentials.
 
-- GitHub Repository Links (Server): <a href="https://bike-rental-reservation-system-server-seven.vercel.app" target="_blank">https://github.com/mdshohed/express-typescript-server-template</a>
+2. **Select Your Cluster:**
+   - Once logged in, you’ll see your clusters on the dashboard. Click on the cluster you’ve already created.
 
-- Project Overview Video:   <a href="https://bike-rental-reservation-system-server-seven.vercel.app" target="_blank">https://youtu.be/RgKtffKd73Y</a>
+3. **Connect to Your Cluster:**
+   - On the cluster page, click the "Connect" button.
 
-</div>
+4. **Choose a Connection Method:**
+   - Select **"Connect your application."**
 
+5. **Select Driver and Version:**
+   - Ensure the "Driver" dropdown is set to **"Node.js"** and the version is appropriate.
 
+6. **Copy the Connection String:**
+   - MongoDB Atlas will display a connection string like this:
 
-### Project Description: Bike Rental Reservation System Backend
+   ```plaintext
+   mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/<dbname>?retryWrites=true&w=majority
+   ```
 
-This a bike rental system where users could easily rent bikes online. User would be able to handle user registrations, bike availability, and booking management efficiently.
+7. **Replace Placeholders in the Connection String:**
+   - Replace `<username>` with your MongoDB username.
+   - Replace `<password>` with your MongoDB user's password.
+   - Replace `<dbname>` with the name of the database you want to connect to.
 
-**Models:**
+   For example:
 
-1. **User Model**
-2. **Bike Model**
-3. **Booking Model**
+   ```plaintext
+   mongodb+srv://admin:Admin123456@cluster0.xxxxx.mongodb.net/lost-and-found?retryWrites=true&w=majority
+   ```
 
-### Technology Stack:
+8. **Add the Database URI to Your `.env` File**
 
-- **Programming Language**: TypeScript
-- **Web Framework**: Express.js
-- **ODM & Validation Library**: Zod, Mongoose for MongoDB
+   Open the `.env` file in the project root and add the following line:
 
-### Models:
+   ```bash
+   DB_URL=mongodb+srv://admin:Admin123456@cluster0.xxxxx.mongodb.net/lost-and-found?retryWrites=true&w=majority
+   ```
 
-1. **User Model**:
-    - **name**: The name of the user.
-    - **email**: The contact email address.
-    - **password**: The account password.
-    - **phone**: The contact phone number.
-    - **address**: The physical address.
-    - **role**: admin / user
-2. **Bike Model**:
-    - **name**: The name of the bike model.
-    - **description**: A brief description of the bike.
-    - **pricePerHour**: The rental price per hour.
-    - **isAvailable**: Indicates if the bike is available for rental (default: true).
-    - **cc**: The engine capacity of the bike in cubic centimeters.
-    - **year**: The manufacturing year of the bike.
-    - **model**: The model of the bike.
-    - **brand**: The brand of the bike.
-3. **Booking Model**:
-    - **userId**: Reference to the User model.
-    - **bikeId**: Reference to the Bike model.
-    - **startTime**: The start time of the rental.
-    - **returnTime**: The return time of the rental.
-    - **totalCost**: The total cost of the rental.
-    - **isReturned**: Indicates if the bike has been returned (default: false).
+   Replace the URI with your actual MongoDB connection string.
 
+### **4.3 Set Up Cloudinary Account and Credentials**
 
-### API Endpoints:
+Cloudinary is used for managing and delivering images. To set it up:
 
-## **User Routes**:
+1. Visit [Cloudinary](https://cloudinary.com/).
+2. Sign up or log in to your account.
+3. Go to the Cloudinary Dashboard.
+4. Note down your `Cloud Name`, `API Key`, and `API Secret`.
 
-1. **Sign Up**
-    - **Route**: /api/auth/signup (POST)
-    - **Request Body**:
-        
-        ```json
-        {
-          "name": "John Doe",
-          "email": "john@example.com",
-          "password": "password123",
-          "phone": "1234567890",
-          "address": "123 Main St, Anytown",
-          "role" : "admin"
-        }
-        
-        ```
-        
-    - **Response**:
-        
-        ```json
-        {
-          "success": true,
-          "statusCode": 201,
-          "message": "User registered successfully",
-          "data": {
-            "_id": "60d9c4e4f3b4b544b8b8d1f5",
-            "name": "John Doe",
-            "email": "john@example.com",
-            "phone": "1234567890",
-            "address": "123 Main St, Anytown",
-            "role" : "admin",
-            "createdAt": "2024-06-10T13:26:51.289Z",
-            "updatedAt": "2024-06-10T13:26:51.289Z",
-            "__v": 0
-          }
-        }
-        
-        ```
-        
-2. **User Login**
-    - **Route**: /api/auth/login (POST)
-    - **Request Body**:
-        
-        ```json
-        {
-          "email": "john@example.com",
-          "password": "password123"
-        }
-        
-        ```
-        
-    - **Response**:
-        
-        ```json
-        {
-          "success": true,
-          "statusCode": 200,
-          "message": "User logged in successfully",
-          "token": "jwt_token",
-          "data": {
-            "_id": "60d9c4e4f3b4b544b8b8d1c3",
-            "name": "John Doe",
-            "email": "john@example.com",
-            "phone": "1234567890",
-            "address": "123 Main St, Anytown",
-            "role" : "admin"
-          }
-        }
-        
-        ```
-        
-3. **Get Profile**
-    - **Route**: /api/users/me (GET)
-    - **Request Headers**: Authorization: Bearer jwt_token
-    - **Response**:
-        
-        ```json
-        {
-          "success": true,
-          "statusCode": 200,
-          "message": "User profile retrieved successfully",
-          "data": {
-              "_id": "6666ff917181b8e5ffe04f91",
-              "name": "admin",
-              "email": "admin@gmail.com",
-              "phone": "1234567890",
-              "address": "123 Main St, Anytown",
-              "role": "admin",
-              "createdAt": "2024-06-10T13:28:49.260Z",
-              "updatedAt": "2024-06-10T13:28:49.260Z",
-              "__v": 0
-          }
-        }
-        
-        ```
-        
-4. **Update Profile**
-    - **Route**: /api/users/me (PUT)
-    - **Request Headers**: Authorization: Bearer jwt_token
-    - **Request Body**:
-        
-        ```json
-        {
-          "name": "John Updated",
-          "phone": "0987654321"
-        }
-        
-        ```
-        
-    - **Response**:
-        
-        ```json
-        {
-          "success": true,
-          "statusCode": 200,
-          "message": "Profile updated successfully",
-          "data": {
-            "_id": "60d9c4e4f3b4b544b8b8d1c5",
-            "name": "John Updated",
-            "email": "john@example.com",
-            "phone": "0987654321",
-            "address": "123 Main St, Anytown",
-            "role" : "admin"
-          }
-        }
-        
-        ```
-        
+Add these credentials to your `.env` file:
 
-## **Bike Routes**:
-
-1. **Create Bike (Admin Only)**
-    - **Route**: /api/bikes (POST)
-    - **Request Headers**: Authorization: Bearer jwt_token
-    - **Request Body**:
-        
-        ```json
-        {
-          "name": "Mountain Bike",
-          "description": "A durable mountain bike for rough terrains.",
-          "pricePerHour": 15,
-          "cc": 250,
-          "year": 2022,
-          "model": "X1",
-          "brand": "Yamaha"
-        }
-        
-        ```
-        
-    - **Response**:
-        
-        ```json
-        {
-          "success": true,
-          "statusCode": 200,
-          "message": "Bike added successfully",
-          "data": {
-            "_id": "60d9c4e4f3b4b544b8b8d1c4",
-            "name": "Mountain Bike",
-            "description": "A durable mountain bike for rough terrains.",
-            "pricePerHour": 15,
-            "isAvailable": true,
-            "cc": 250,
-            "year": 2022,
-            "model": "X1",
-            "brand": "Yamaha"
-          }
-        }
-        
-        ```
-        
-2. **Get All Bikes**
-    - **Route**: /api/bikes (GET)
-    - **Response**:
-        
-        ```json
-        {
-          "success": true,
-          "statusCode": 200,
-          "message": "Bikes retrieved successfully",
-          "data": [
-            {
-              "_id": "bike_id",
-              "name": "Mountain Bike",
-              "description": "A durable mountain bike for rough terrains.",
-              "pricePerHour": 15,
-              "isAvailable": true,
-              "cc": 250,
-              "year": 2022,
-              "model": "X1",
-              "brand": "Yamaha"
-            },
-            ...other bikes...
-          ]
-        }
-        
-        ```
-        
-3. **Update Bike (Admin Only)**
-    - **Route**: /api/bikes/:id (PUT)
-    - **Request Headers**: Authorization: Bearer jwt_token
-    - **Request Body**:
-        
-        ```json
-        {
-          "pricePerHour": 20
-        }
-        
-        ```
-        
-    - **Response**:
-        
-        ```json
-        {
-          "success": true,
-          "statusCode": 200,
-          "message": "Bike updated successfully",
-          "data": {
-            "_id": "bike_id",
-            "name": "Mountain Bike",
-            "description": "A durable mountain bike for rough terrains.",
-            "pricePerHour": 20, // Updated price per hour
-            "isAvailable": true,
-            "cc": 250,
-            "year": 2022,
-            "model": "X1",
-            "brand": "Yamaha"
-          }
-        }
-        
-        ```
-        
-4. **Delete Bike (Admin Only)**
-    - **Route**: /api/bikes/:id (DELETE)
-    - **Request Headers**: Authorization: Bearer jwt_token
-    - **Response**:
-        
-        ```json
-        {
-          "success": true,
-          "statusCode": 200,
-          "message": "Bike deleted successfully",
-          "data": {
-            "_id": "bike_id",
-            "name": "Mountain Bike",
-            "description": "A durable mountain bike for rough terrains.",
-            "pricePerHour": 20,
-            "isAvailable": false,
-            "cc": 250,
-            "year": 2022,
-            "model": "X1",
-            "brand": "Yamaha"
-          }
-        }
-        
-        ```
-        
-
-## **Rental Routes**:
-
-1. **Create Rental**
-    - **Route**: /api/rentals (POST)
-    - **Request Headers**: Authorization: Bearer jwt_token
-    - User information should be extracted from the token
-    - **Bike's availability status should be updated to false**
-    - **Request Body**:
-        
-        ```json
-        {
-          "bikeId": "60d9c4e4f3b4b544b8b8d1c4",
-          "startTime": "2024-06-10T09:00:00Z"
-        }
-        
-        ```
-        
-    - **Response**:
-        
-        ```json
-        {
-          "success": true,
-          "statusCode": 200,
-          "message": "Rental created successfully",
-          "data": {
-            "_id": "60d9c4e4f3b4b544b8b8d1c4",
-            "userId": "60d9c4e4f3b4b544b8b8d1c3",
-            "bikeId": "60d9c4e4f3b4b544b8b8d1c4",
-            "startTime": "2024-06-10T09:00:00Z",
-            "returnTime": null,
-            "totalCost": 0,
-            "isReturned": false
-          }
-        }
-        ```
-
-    **Important Note:** Upon creating a rental, ensure the bike's isAvailable status is set to false to indicate that it is currently rented out and not available for other users to rent.
-
-1. **Return Bike (Admin Only)**
-    - **Route**: /api/rentals/:id/return (PUT)
-    - **Request Headers**: Authorization: Bearer jwt_token
-    - **Request Body**: Not needed
-    - **Bike's availability status should be updated to true**
-    - **Hints**: The cost should be calculated based on the start and return time of the rental. For example, if the start time is "2024-06-10T09:00:00Z" and the return time is "2024-06-10T18:00:00Z" (current time), the total rental duration is 9 hours. If the price per hour is $15, the total cost will be 9 * 15 = $135.
-    - **Response**:
-        
-        ```json
-        {
-          "success": true,
-          "statusCode": 200,
-          "message": "Bike returned successfully",
-          "data": {
-            "_id": "60d9c4e4f3b4b544b8b8d1c4",
-            "userId": "60d9c4e4f3b4b544b8b8d1c3",
-            "bikeId": "60d9c4e4f3b4b544b8b8d1c4",
-            "startTime": "2024-06-10T09:00:00Z",
-            "returnTime": "2024-06-10T18:00:00Z",// Current time when returning the bike
-            "totalCost": 135, // Calculated based on rental duration
-            "isReturned": true
-          }
-        }
-        
-        ```
-        
-2. **Get All Rentals for User (My rentals)**
-    - **Route**: /api/rentals (GET)
-    - **Request Headers**: Authorization: Bearer jwt_token
-    - **Response**:
-        
-        ```json
-        {
-          "success": true,
-          "statusCode": 200,
-          "message": "Rentals retrieved successfully",
-          "data": [
-            {
-              "_id": "60d9c4e4f3b4b544b8b8d1c4",
-              "userId": "60d9c4e4f3b4b544b8b8d1c3",
-              "bikeId": "60d9c4e4f3b4b544b8b8d1c4",
-              "startTime": "2024-06-10T09:00:00Z",
-              "returnTime": "2024-06-10T18:00:00Z",
-              "totalCost": 135,
-              "isReturned": true
-            },
-            ...other rentals...
-          ]
-        }
-        
-        ```
-
-
-
-
-### Middleware and Error Handling:
-
-1. **No Data Found**:
-    - When finding data, if the database collection is empty or does not match any data, return a generic message: "No data found."
-        - **Response**:
-            
-            ```json
-            {
-              "success": false,
-              "message": "No Data Found",
-              "data": []
-            }
-            
-            ```
-            
-2. **Error Handling**:
-    - Implement proper error handling throughout the application. Use global error handling middleware to catch and handle errors, providing appropriate error responses  error messages.
-    - Error Response Object should include the following properties:
-        - **success**: false
-        - **message**: Error Type (e.g., Validation Error, Cast Error, Duplicate Entry)
-        - **errorMessages**:
-            
-            ```json
-            [
-              {
-                "path": "",
-                "message": "Error message"
-              }
-            ]
-            
-            ```
-            
-        - **Sample Error Response**:
-            
-            ```json
-            {
-              "success": false,
-              "message": "E11000 duplicate key error collection:: email_1 dup key: { email: \\"user2@gmail.com\\" }",
-              "errorMessages": [
-                {
-                  "path": "",
-                  "message": "E11000 duplicate key error index: email_1 dup key: { email: \\"user2@gmail.com\\" }"
-                }
-              ],
-              "stack": "error stack"
-            }
-            
-            ```
-            
-3. **Not Found Route**:
-    - Implement a global "Not Found" handler for unmatched routes. When a route is not found, respond with a generic message: "Not Found."
-        - **Response**:
-            
-            ```json
-            {
-              "success": false,
-              "statusCode": 404,
-              "message": "Not Found"
-            }
-            
-            ```
-            
-### **4\. Authentication Middleware:**
-
-Implement an Authentication Middleware to authenticate your application. Ensures that only user  and admin can access their own accessible routes.
-
-```json
-{
-  "success": false,
-  "statusCode": 401,
-  "message": "You have no access to this route",
-}
+```bash
+CLOUDINARY_CLOUD_NAME=<your-cloud-name>
+CLOUDINARY_API_KEY=<your-api-key>
+CLOUDINARY_API_SECRET=<your-api-secret>
 ```
 
-## npm package
-- dotenv
-- cors(dependencies/devDependencies)
-- express(dependencies/devDependencies)
-- mongoose
-- cookie-parser(dependencies/devDependencies)
-- Zod
-- eslint
-- prettier
-- http-status
-- jsonwebtoken(dependencies/devDependencies)
-- bcrypt(dependencies/devDependencies)
+Replace `<your-cloud-name>`, `<your-api-key>`, and `<your-api-secret>` with your Cloudinary account details.
 
+### **4.4 Set Up Gmail App Password**
 
+To send emails through your Gmail account, you need to generate an app password:
+
+1. Go to your [Google Account Security Settings](https://myaccount.google.com/security).
+2. Under "Signing in to Google," enable 2-Step Verification.
+3. Once 2-Step Verification is enabled, go back to the Security page and click on "App passwords."
+4. Select "Mail" as the app and your device type, then generate the app password.
+5. Copy the generated password.
+
+Add your Gmail credentials to the `.env` file:
+
+```bash
+SENDER_EMAIL=<your-email>
+SENDER_APP_PASS=<your-app-password>
+```
+
+Replace `<your-email>` with your Gmail address and `<your-app-password>` with the app password you generated.
+
+### **4.5 Add Remaining Environment Variables**
+
+Complete your `.env` file with the following variables:
+
+```bash
+NODE_ENV=development
+PORT=3000
+BCRYPT_SALT_ROUNDS=12
+JWT_ACCESS_SECRET=secret
+JWT_ACCESS_EXPIRES_IN=7d
+JWT_REFRESH_SECRET=refreshsecret
+JWT_REFRESH_EXPIRES_IN=1y
+ADMIN_EMAIL=admin@gmail.com
+ADMIN_PASSWORD=admin
+ADMIN_MOBILE_NUMBER=1234567890
+```
+
+## **5. Run the Project**
+
+After setting up the environment variables, you can run the project.
+
+### **5.1 Run in Development Mode**
+
+To start the project in development mode, run:
+
+with **npm**:
+
+```bash
+npm run dev
+```
+
+This will start the development server with hot-reloading enabled.
+
+### **5.2 Run in Production Mode**
+
+To start the project in production mode:
+
+1. **Build the Project:**
+
+   
+
+   With **npm**:
+
+   ```bash
+   npm run build
+   ```
+
+2. **Start the Server:**
+
+   With **npm**:
+
+   ```bash
+   npm start
+   ```
+
+## **6. Access the Application**
+
+Once the server is running, you can access the application in your browser by visiting:
+
+```bash
+http://localhost:5000
+```
+
+This guide should help you set up, configure, and run your project seamlessly. If you encounter any issues or need further assistance, feel free to ask!
