@@ -79,8 +79,10 @@ const loginUser = async (payload: TLoginUser) => {
     email: user.email,
     mobileNumber: user.mobileNumber,
     profilePhoto: user.profilePhoto,
+    follower: user.follower, 
+    following: user.following,
     role: user.role,
-    status: user.status,
+    status: user.status
   };
 
   const accessToken = createToken(

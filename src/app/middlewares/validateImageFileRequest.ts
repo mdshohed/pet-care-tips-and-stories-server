@@ -2,15 +2,17 @@
 import { NextFunction, Request, Response } from 'express';
 import { AnyZodObject, ZodArray, ZodEffects, ZodRecord } from 'zod';
 import { catchAsync } from '../utils/catchAsync';
+import { log } from 'util';
 
 const validateImageFileRequest = (
   schema: AnyZodObject | ZodEffects<any> | ZodArray<any> | ZodRecord<any>
 ) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    console.log("data",req.files);
+    
     const parsedFile = await schema.parseAsync({
       files: req.files,
     });
-
     req.files = parsedFile.files;
 
     next();

@@ -4,9 +4,7 @@ import { catchAsync } from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { AuthServices } from './auth.service';
 
-const registerUser = catchAsync(async (req, res) => {
-  console.log(req.body);
-  
+const registerUser = catchAsync(async (req, res) => {  
   const result = await AuthServices.registerUser(req.body);
   const { refreshToken, accessToken } = result;
 

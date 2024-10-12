@@ -5,8 +5,6 @@ import { UserServices } from './user.service';
 import { log } from 'handlebars/runtime';
 
 const userRegister = catchAsync(async (req, res) => {
-  console.log(req.body);
-  
   const user = await UserServices.createUser(req.body);
 
   sendResponse(res, {
@@ -39,8 +37,20 @@ const getSingleUser = catchAsync(async (req, res) => {
   });
 });
 
+const updateFriendConnect = catchAsync(async (req, res) => {
+  const user = await UserServices.updateFriendConnectionInToDB(req.params.id, req.body);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'User Collected Successfully',
+    data: user,
+  });
+});
+
 export const UserControllers = {
   getSingleUser,
   userRegister,
   getAllUsers,
+  updateFriendConnect, 
 };

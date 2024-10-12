@@ -46,6 +46,18 @@ const userSchema = new Schema<TUser, IUserModel>(
       type: String,
       default: null
     },
+    follower: {
+      type: [Schema.Types.ObjectId],
+      ref: "User", 
+      required: false,
+      default: [], 
+    },
+    following: {
+      type: [Schema.Types.ObjectId],
+      ref: "User", 
+      required: false,
+      default: [], 
+    },
   },
   {
     timestamps: true,
