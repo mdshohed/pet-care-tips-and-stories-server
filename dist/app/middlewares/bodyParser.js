@@ -8,16 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const catchAsync_1 = require("../utils/catchAsync");
-const validateImageFileRequest = (schema) => {
-    return (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log("data", req.files);
-        const parsedFile = yield schema.parseAsync({
-            files: req.files,
-        });
-        req.files = parsedFile.files;
-        next();
-    }));
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-exports.default = validateImageFileRequest;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.parseBody = void 0;
+const AppError_1 = __importDefault(require("../errors/AppError"));
+const catchAsync_1 = require("../utils/catchAsync");
+exports.parseBody = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.body.data) {
+        throw new AppError_1.default(400, 'Please provide data in the body under data key');
+    }
+    req.body = JSON.parse(req.body.data);
+    next();
+}));

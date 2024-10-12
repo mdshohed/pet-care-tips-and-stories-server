@@ -58,6 +58,18 @@ const userSchema = new mongoose_1.Schema({
         type: String,
         default: null
     },
+    follower: {
+        type: [mongoose_1.Schema.Types.ObjectId],
+        ref: "User",
+        required: false,
+        default: [],
+    },
+    following: {
+        type: [mongoose_1.Schema.Types.ObjectId],
+        ref: "User",
+        required: false,
+        default: [],
+    },
 }, {
     timestamps: true,
     virtuals: true,

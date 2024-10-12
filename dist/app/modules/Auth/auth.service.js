@@ -68,8 +68,10 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         email: user.email,
         mobileNumber: user.mobileNumber,
         profilePhoto: user.profilePhoto,
+        follower: user.follower,
+        following: user.following,
         role: user.role,
-        status: user.status,
+        status: user.status
     };
     const accessToken = (0, verifyJWT_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_expires_in);
     const refreshToken = (0, verifyJWT_1.createToken)(jwtPayload, config_1.default.jwt_refresh_secret, config_1.default.jwt_refresh_expires_in);

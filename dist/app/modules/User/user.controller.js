@@ -18,7 +18,6 @@ const catchAsync_1 = require("../../utils/catchAsync");
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const user_service_1 = require("./user.service");
 const userRegister = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.body);
     const user = yield user_service_1.UserServices.createUser(req.body);
     (0, sendResponse_1.default)(res, {
         success: true,
@@ -45,8 +44,18 @@ const getSingleUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 
         data: user,
     });
 }));
+const updateFriendConnect = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_service_1.UserServices.updateFriendConnectionInToDB(req.params.id, req.body);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: 'User Collected Successfully',
+        data: user,
+    });
+}));
 exports.UserControllers = {
     getSingleUser,
     userRegister,
     getAllUsers,
+    updateFriendConnect,
 };

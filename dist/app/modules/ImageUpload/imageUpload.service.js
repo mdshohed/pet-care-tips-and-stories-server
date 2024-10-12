@@ -8,16 +8,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const catchAsync_1 = require("../utils/catchAsync");
-const validateImageFileRequest = (schema) => {
-    return (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log("data", req.files);
-        const parsedFile = yield schema.parseAsync({
-            files: req.files,
-        });
-        req.files = parsedFile.files;
-        next();
-    }));
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-exports.default = validateImageFileRequest;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ImageUploadServices = void 0;
+const http_status_1 = __importDefault(require("http-status"));
+const AppError_1 = __importDefault(require("../../errors/AppError"));
+const uploadImage = (photo) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!photo) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "No photo provided for upload");
+    }
+    ;
+    return {
+        filename: photo.originalname,
+        path: photo.path,
+        size: photo.size
+    };
+});
+exports.ImageUploadServices = {
+    uploadImage
+};

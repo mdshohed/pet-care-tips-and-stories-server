@@ -15,3 +15,4 @@ exports.UserRoutes = router;
 router.post('/create-user', (0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), (0, validateRequest_1.default)(user_validation_1.UserValidation.createUserValidationSchema), user_controller_1.UserControllers.userRegister);
 router.get('/', user_controller_1.UserControllers.getAllUsers);
 router.get('/:id', user_controller_1.UserControllers.getSingleUser);
+router.put('/:id', user_controller_1.UserControllers.updateFriendConnect);

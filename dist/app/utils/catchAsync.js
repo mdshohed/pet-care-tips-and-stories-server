@@ -13,7 +13,6 @@ exports.catchAsync = void 0;
 const catchAsync = (fn) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         Promise.resolve(fn(req, res, next)).catch((error) => {
-            console.log(error);
             next(error);
         });
     });

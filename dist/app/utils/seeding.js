@@ -15,11 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.seed = void 0;
 /* eslint-disable no-console */
 const config_1 = __importDefault(require("../config"));
+const postCategory_constant_1 = require("../modules/postCategory/postCategory.constant");
+const postCategory_model_1 = require("../modules/postCategory/postCategory.model");
 const user_constant_1 = require("../modules/User/user.constant");
 const user_model_1 = require("../modules/User/user.model");
 const seed = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        //atfirst check if the admin exist of not
+        //at first check if the admin exist of not
         const admin = yield user_model_1.User.findOne({
             role: user_constant_1.USER_ROLE.ADMIN,
             email: config_1.default.admin_email,
@@ -28,15 +30,36 @@ const seed = () => __awaiter(void 0, void 0, void 0, function* () {
         if (!admin) {
             console.log('Seeding started...');
             yield user_model_1.User.create({
-                name: 'Admin',
+                name: 'Shohedul Islam',
                 role: user_constant_1.USER_ROLE.ADMIN,
                 email: config_1.default.admin_email,
                 password: config_1.default.admin_password,
                 mobileNumber: config_1.default.admin_mobile_number,
+                profilePhoto: config_1.default.admin_profile_photo,
                 status: user_constant_1.USER_STATUS.ACTIVE,
             });
             console.log('Admin created successfully...');
             console.log('Seeding completed...');
+        }
+        const category1 = yield postCategory_model_1.PostCategory.findOne({
+            name: postCategory_constant_1.POST_CATEGORY.tips,
+        });
+        if (!category1) {
+            yield postCategory_model_1.PostCategory.create({
+                name: postCategory_constant_1.POST_CATEGORY.tips,
+                postCount: 0,
+            });
+            console.log('Post Category1 created successfully...');
+        }
+        const category2 = yield postCategory_model_1.PostCategory.findOne({
+            name: postCategory_constant_1.POST_CATEGORY.stories,
+        });
+        if (!category2) {
+            yield postCategory_model_1.PostCategory.create({
+                name: postCategory_constant_1.POST_CATEGORY.stories,
+                postCount: 0,
+            });
+            console.log('Post Category2 created successfully...');
         }
     }
     catch (error) {
