@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostServices = void 0;
 const QueryBuilder_1 = require("../../builder/QueryBuilder");
-const meilisearch_1 = require("../../utils/meilisearch");
+// import { addDocumentToIndex, deleteDocumentFromIndex } from '../../utils/meilisearch';
 const post_constant_1 = require("./post.constant");
 const post_model_1 = require("./post.model");
 const post_utils_1 = require("./post.utils");
@@ -21,7 +21,7 @@ const createPostIntoDB = (payload, images) => __awaiter(void 0, void 0, void 0, 
     payload.likes = { count: 0, user: [] };
     payload.comments = { count: 0, comment: [] };
     const result = yield post_model_1.Post.create(payload);
-    yield (0, meilisearch_1.addDocumentToIndex)(result, 'posts');
+    // await addDocumentToIndex(result, 'posts');
     return result;
 });
 const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
@@ -52,10 +52,12 @@ const getPostFromDB = (postId) => __awaiter(void 0, void 0, void 0, function* ()
 });
 const updatePostInDB = (postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield post_model_1.Post.findByIdAndUpdate(postId, payload, { new: true });
-    if (result) {
-        yield (0, meilisearch_1.addDocumentToIndex)(result, 'posts');
-    }
-    else {
+    // if (result) {
+    //   await addDocumentToIndex(result, 'posts');
+    // } else {
+    //   throw new Error(`Post with ID ${postId} not found.`);
+    // }
+    if (!result) {
         throw new Error(`Post with ID ${postId} not found.`);
     }
     return result;
@@ -84,20 +86,19 @@ const updatePostLikesInDB = (postId, payload) => __awaiter(void 0, void 0, void 
         };
     }
     const result = yield post_model_1.Post.findByIdAndUpdate(postId, updateData, { new: true });
-    if (result) {
-        yield (0, meilisearch_1.addDocumentToIndex)(result, 'posts');
-    }
-    else {
-        throw new Error(`Post with ID ${postId} not found.`);
-    }
+    // if (result) {
+    //   await addDocumentToIndex(result, 'posts');
+    // } else {
+    //   throw new Error(`Post with ID ${postId} not found.`);
+    // }
     return result;
 });
 const deletePostFromDB = (postId) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield post_model_1.Post.findByIdAndDelete(postId);
-    const deletedPostId = result === null || result === void 0 ? void 0 : result._id;
-    if (deletedPostId) {
-        yield (0, meilisearch_1.deleteDocumentFromIndex)('posts', deletedPostId.toString());
-    }
+    // const deletedPostId = result?._id;
+    // if (deletedPostId) {
+    //   await deleteDocumentFromIndex('posts', deletedPostId.toString());
+    // }
     return result;
 });
 exports.PostServices = {

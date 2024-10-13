@@ -5,7 +5,6 @@ import { PostRoutes } from "../modules/post/post.route";
 import { PostCategoryRoutes } from "../modules/postCategory/postCategory.route";
 import { ProfileRoutes } from "../modules/Profile/profile.route";
 import { ImageUploadRoutes } from "../modules/ImageUpload/imageUpload.routes";
-import { MeilisearchRoutes } from "../modules/Meilisearch/meilisearch.routes";
 import { StripeRoutes } from "../modules/Stripe/stripe.route";
 
 const router = Router();
@@ -26,10 +25,6 @@ const moduleRoutes = [
   {
     path: "/posts",
     route: PostRoutes,
-  },
-  {
-    path: '/search-items',
-    route: MeilisearchRoutes,
   },
   {
     path: '/profile',
