@@ -13,7 +13,7 @@ router.get(
     ProfileController.getMyProfile
 );
 
-router.patch(
+router.put(
     '/',
     auth(USER_ROLE.ADMIN, USER_ROLE.USER),
     multerUpload.single('profilePhoto'),
