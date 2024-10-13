@@ -6,8 +6,8 @@ import { noImage } from '../modules/post/post.constant';
 import { TPost } from '../modules/post/post.interface';
 
 const meiliClient = new MeiliSearch({
-  // host: config.meilisearch_host as string,
-  host: "" as string,
+  host: config.meilisearch_host as string,
+  // host: "" as string,
   apiKey: config.meilisearch_master_key,
 });
 

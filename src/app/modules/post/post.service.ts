@@ -120,10 +120,10 @@ const updatePostLikesInDB = async (postId: string, payload: { userId: string }) 
 
 const deletePostFromDB = async (postId: string) => {
   const result = await Post.findByIdAndDelete(postId);
-  const deletedPostId = result?._id;
-  if (deletedPostId) {
-    await deleteDocumentFromIndex('posts', deletedPostId.toString());
-  }
+  // const deletedPostId = result?._id;
+  // if (deletedPostId) {
+  //   await deleteDocumentFromIndex('posts', deletedPostId.toString());
+  // }
 
   return result;
 };
