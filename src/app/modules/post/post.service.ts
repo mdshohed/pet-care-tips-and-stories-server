@@ -1,7 +1,7 @@
 import { count } from 'console';
 import { QueryBuilder } from '../../builder/QueryBuilder';
 import { TImageFiles } from '../../interfaces/image.interface';
-import { addDocumentToIndex, deleteDocumentFromIndex } from '../../utils/meilisearch';
+// import { addDocumentToIndex, deleteDocumentFromIndex } from '../../utils/meilisearch';
 import { PostSearchableFields } from './post.constant';
 
 import { TPost } from './post.interface';
@@ -14,8 +14,6 @@ import {
 
 const createPostIntoDB = async (payload: TPost, images: TImageFiles) => {
   const { itemImages } = images;
-
-  
   payload.images = itemImages.map((image) => image.path);
   payload.likes = {count: 0, user: []}; 
   payload.comments = { count: 0, comment: []}
@@ -23,7 +21,7 @@ const createPostIntoDB = async (payload: TPost, images: TImageFiles) => {
 
   const result = await Post.create(payload);
 
-  await addDocumentToIndex(result, 'posts');
+  // await addDocumentToIndex(result, 'posts');
   return result;
 };
 
@@ -69,9 +67,12 @@ const getPostFromDB = async (postId: string) => {
 
 const updatePostInDB = async (postId: string, payload: TPost) => {
   const result = await Post.findByIdAndUpdate(postId, payload, { new: true });
-  if (result) {
-    await addDocumentToIndex(result, 'posts');
-  } else {
+  // if (result) {
+  //   await addDocumentToIndex(result, 'posts');
+  // } else {
+  //   throw new Error(`Post with ID ${postId} not found.`);
+  // }
+  if(!result){
     throw new Error(`Post with ID ${postId} not found.`);
   }
   return result;
@@ -107,11 +108,11 @@ const updatePostLikesInDB = async (postId: string, payload: { userId: string }) 
 
   const result = await Post.findByIdAndUpdate(postId, updateData, { new: true });
 
-  if (result) {
-    await addDocumentToIndex(result, 'posts');
-  } else {
-    throw new Error(`Post with ID ${postId} not found.`);
-  }
+  // if (result) {
+  //   await addDocumentToIndex(result, 'posts');
+  // } else {
+  //   throw new Error(`Post with ID ${postId} not found.`);
+  // }
 
   return result;
 };

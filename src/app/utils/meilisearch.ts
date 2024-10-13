@@ -1,53 +1,53 @@
-import { MeiliSearch } from 'meilisearch';
-import { Document, Types } from 'mongoose';
+// import { MeiliSearch } from 'meilisearch';
+// import { Document, Types } from 'mongoose';
 
-import config from '../config';
-import { noImage } from '../modules/post/post.constant';
-import { TPost } from '../modules/post/post.interface';
+// import config from '../config';
+// import { noImage } from '../modules/post/post.constant';
+// import { TPost } from '../modules/post/post.interface';
 
-const meiliClient = new MeiliSearch({
-  host: config.meilisearch_host as string,
-  // host: "" as string,
-  apiKey: config.meilisearch_master_key,
-});
+// const meiliClient = new MeiliSearch({
+//   host: config.meilisearch_host as string,
+//   // host: "" as string,
+//   apiKey: config.meilisearch_master_key,
+// });
 
-export async function addDocumentToIndex(
-  result: Document<unknown, object, TPost> & TPost & { _id: Types.ObjectId },
-  indexKey: string
-) {
-  const index = meiliClient.index(indexKey);
+// export async function addDocumentToIndex(
+//   result: Document<unknown, object, TPost> & TPost & { _id: Types.ObjectId },
+//   indexKey: string
+// ) {
+//   const index = meiliClient.index(indexKey);
 
-  const { _id, title, description, images } = result;
-  const firstImage = images?.[0] || noImage;
+//   const { _id, title, description, images } = result;
+//   const firstImage = images?.[0] || noImage;
 
-  const document = {
-    id: _id.toString(), // Ensure the ID is a string
-    title,
-    description,
-    thumbnail: firstImage,
-  };
+//   const document = {
+//     id: _id.toString(), // Ensure the ID is a string
+//     title,
+//     description,
+//     thumbnail: firstImage,
+//   };
 
-  try {
-    await index.addDocuments([document]);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error adding document to MeiliSearch:', error);
-  }
-}
+//   try {
+//     await index.addDocuments([document]);
+//   } catch (error) {
+//     // eslint-disable-next-line no-console
+//     console.error('Error adding document to MeiliSearch:', error);
+//   }
+// }
 
-export const deleteDocumentFromIndex = async (indexKey: string, id: string) => {
-  const index = meiliClient.index(indexKey);
+// export const deleteDocumentFromIndex = async (indexKey: string, id: string) => {
+//   const index = meiliClient.index(indexKey);
 
-  try {
-    await index.deleteDocument(id);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error deleting resource from MeiliSearch:', error);
-  }
-};
+//   try {
+//     await index.deleteDocument(id);
+//   } catch (error) {
+//     // eslint-disable-next-line no-console
+//     console.error('Error deleting resource from MeiliSearch:', error);
+//   }
+// };
 
-export const deleteMeiliSearchIndex = async (indexKey: string) => {
-  meiliClient.deleteIndex(indexKey);
-};
+// export const deleteMeiliSearchIndex = async (indexKey: string) => {
+//   meiliClient.deleteIndex(indexKey);
+// };
 
-export default meiliClient;
+// export default meiliClient;
