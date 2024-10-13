@@ -2,7 +2,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { AnyZodObject, ZodArray, ZodEffects, ZodRecord } from 'zod';
 import { catchAsync } from '../utils/catchAsync';
-import { log } from 'util';
+
 
 const validateImageFileRequest = (
   schema: AnyZodObject | ZodEffects<any> | ZodArray<any> | ZodRecord<any>

@@ -18,7 +18,8 @@ const meilisearch_1 = require("meilisearch");
 const config_1 = __importDefault(require("../config"));
 const post_constant_1 = require("../modules/post/post.constant");
 const meiliClient = new meilisearch_1.MeiliSearch({
-    host: config_1.default.meilisearch_host,
+    // host: config.meilisearch_host as string,
+    host: "",
     apiKey: config_1.default.meilisearch_master_key,
 });
 function addDocumentToIndex(result, indexKey) {

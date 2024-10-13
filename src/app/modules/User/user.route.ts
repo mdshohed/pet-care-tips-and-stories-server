@@ -4,6 +4,7 @@ import auth from '../../middlewares/auth';
 import { USER_ROLE } from './user.constant';
 import validateRequest from '../../middlewares/validateRequest';
 import { UserValidation } from './user.validation';
+import { multerUpload } from '../../config/multer.config';
 
 const router = express.Router();
 
@@ -12,6 +13,7 @@ export const UserRoutes = router;
 router.post(
   '/create-user',
   auth(USER_ROLE.ADMIN),
+  // multerUpload.single('image'),
   validateRequest(UserValidation.createUserValidationSchema),
   UserControllers.userRegister
 );
