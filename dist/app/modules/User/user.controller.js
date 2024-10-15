@@ -27,6 +27,7 @@ const userRegister = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0
     });
 }));
 const getAllUsers = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("users");
     const users = yield user_service_1.UserServices.getAllUsersFromDB(req.query);
     (0, sendResponse_1.default)(res, {
         success: true,

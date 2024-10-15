@@ -7,8 +7,7 @@ const post_route_1 = require("../modules/post/post.route");
 const postCategory_route_1 = require("../modules/postCategory/postCategory.route");
 const profile_route_1 = require("../modules/Profile/profile.route");
 const imageUpload_routes_1 = require("../modules/ImageUpload/imageUpload.routes");
-const meilisearch_routes_1 = require("../modules/Meilisearch/meilisearch.routes");
-const stripe_route_1 = require("../modules/Stripe/stripe.route");
+const payment_route_1 = require("../modules/payment/payment.route");
 const router = (0, express_1.Router)();
 const moduleRoutes = [
     {
@@ -28,10 +27,6 @@ const moduleRoutes = [
         route: post_route_1.PostRoutes,
     },
     {
-        path: '/search-items',
-        route: meilisearch_routes_1.MeilisearchRoutes,
-    },
-    {
         path: '/profile',
         route: profile_route_1.ProfileRoutes,
     },
@@ -40,8 +35,8 @@ const moduleRoutes = [
         route: imageUpload_routes_1.ImageUploadRoutes
     },
     {
-        path: "/create-payment-intent",
-        route: stripe_route_1.StripeRoutes,
+        path: "/payment",
+        route: payment_route_1.PaymentRoutes,
     },
 ];
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

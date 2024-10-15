@@ -45,6 +45,12 @@ exports.PremiumSchema = new mongoose_1.Schema({
         type: Number,
         required: true,
     },
+    subscribedUser: {
+        type: [mongoose_1.Schema.Types.ObjectId],
+        ref: "User",
+        required: false,
+        default: [],
+    }
 });
 const LikesSchema = new mongoose_1.Schema({
     count: {
