@@ -1,4 +1,5 @@
 import { ObjectId } from "mongoose";
+import { TUser } from "../User/user.interface";
 
 export type TReplyComment = {
   text: string, 
@@ -19,6 +20,7 @@ export type TComments = {
 export type TPremium = {
   subscriptionFee: number;
   isPending: boolean; 
+  subscribedUser?: ObjectId[]
 }
 
 export type TLikes = {

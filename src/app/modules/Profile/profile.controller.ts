@@ -17,7 +17,7 @@ const getMyProfile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const updateMyProfile = catchAsync(async (req, res) => {
+const updateMyProfile = catchAsync(async (req, res) => {  
   const result = await ProfileServices.updateMyProfile(
     req.user,
     req.body,

@@ -37,6 +37,12 @@ export const PremiumSchema = new Schema<TPremium>({
     type: Number,
     required: true,
   },
+  subscribedUser: {
+    type: [Schema.Types.ObjectId],
+    ref: "User",
+    required: false,
+    default: [], 
+  }
 });
 
 const LikesSchema = new Schema<TLikes>({

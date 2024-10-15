@@ -6,6 +6,7 @@ import { PostCategoryRoutes } from "../modules/postCategory/postCategory.route";
 import { ProfileRoutes } from "../modules/Profile/profile.route";
 import { ImageUploadRoutes } from "../modules/ImageUpload/imageUpload.routes";
 import { StripeRoutes } from "../modules/Stripe/stripe.route";
+import { PaymentRoutes } from "../modules/payment/payment.route";
 
 const router = Router();
 
@@ -35,8 +36,8 @@ const moduleRoutes = [
     route: ImageUploadRoutes
   },
   {
-    path: "/create-payment-intent",
-    route: StripeRoutes,
+    path: "/payment",
+    route: PaymentRoutes,
   },
 ];
 

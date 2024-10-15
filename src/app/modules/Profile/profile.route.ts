@@ -4,6 +4,8 @@ import { USER_ROLE } from '../User/user.constant';
 import { ProfileController } from './profile.controller';
 import { multerUpload } from '../../config/multer.config';
 import { parseBody } from '../../middlewares/bodyParser';
+import validateImageFileRequest from '../../middlewares/validateImageFileRequest';
+import { ImageFilesArrayZodSchema } from '../../zod/image.validation';
 
 const router = express.Router();
 
@@ -16,7 +18,7 @@ router.get(
 router.put(
     '/',
     auth(USER_ROLE.ADMIN, USER_ROLE.USER),
-    multerUpload.single('profilePhoto'),
+    multerUpload.single('profilePhoto'),   
     parseBody,
     ProfileController.updateMyProfile
 )
