@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        color: #333333;
+      }
+      .container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        text-align: center;
+        padding: 20px 0;
+      }
+      .button-container {
+        text-align: center;
+      }
+      .button {
+        background-color: #e74c3c;
+        color: #ffffff;
+        padding: 15px 25px;
+        text-decoration: none;
+        display: inline-block;
+        margin: 20px 0;
+        border-radius: 5px;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        color: #999999;
+      }
+      .social-icons {
+        margin-top: 20px;
+        display: inline-block;
+      }
+      .social-icons img {
+        width: 24px;
+        margin: 0 10px;
+      }
+      .footer-text {
+        margin-top: 10px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>Hello, {{username}}!</h2>
+      </div>
+      <p>Someone (hopefully you) has requested a password reset on your account. Please confirm that you requested this password reset by clicking on the link below. You will receive an email with your new password.</p>
+      
+      <div class="button-container">
+      <a href="{{resetLink}}" class="button">RESET PASSWORD!</a>
+    </div>
+
+      <p>If you did not request this modification, just forget this email. Your password will remain the same.</p>
+
+      <div class="footer">
+        <p>purrfectCare Team</p>
+        <div class="social-icons">
+          <a href="#"><img src="facebook-icon.png" alt="Facebook"></a>
+          <a href="#"><img src="instagram-icon.png" alt="Instagram"></a>
+          <a href="#"><img src="twitter-icon.png" alt="Twitter"></a>
+        </div>
+        <p class="footer-text">
+          2011 - 2021 © purrfectCare <br>
+          <a href="www.purrfectCare.com">www.purrfectCare.com</a> <br>
+          If you need help, please contact us at <a href="mailto:mdshohed170@gmail.com">mdshohed170@gmail.com</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

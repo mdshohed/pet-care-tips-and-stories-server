@@ -38,12 +38,13 @@ const commentsSchema = new mongoose_1.Schema({
 exports.PremiumSchema = new mongoose_1.Schema({
     isPending: {
         type: Boolean,
-        required: true,
+        required: false,
         default: true,
     },
     subscriptionFee: {
         type: Number,
-        required: true,
+        required: false,
+        default: 0,
     },
     subscribedUser: {
         type: [mongoose_1.Schema.Types.ObjectId],

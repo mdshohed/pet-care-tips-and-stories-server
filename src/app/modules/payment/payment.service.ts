@@ -9,6 +9,8 @@ import { Payment } from "./payment.model";
 const createPayment = async (payload: TPayment) => {
   const userId = new Types.ObjectId(payload.userId);  
   const post = await Post.findById(payload.postId)
+  console.log("post", payload.postId, post);
+  
   if(!post){
     throw new Error(`Post with ID ${payload.postId} not found.`);
   }
@@ -16,20 +18,34 @@ const createPayment = async (payload: TPayment) => {
   if(!user){
     throw new Error(`User with ID ${payload.userId} not found.`);
   }
-  const updatePost = post.premiumDetails?.subscribedUser || [];
-  console.log("updatePost", updatePost);
+  if(!post.premiumDetails){
+    throw new Error(`Post Premium Details Not Found!`);
+  }
+  const updatePost = post.premiumDetails.subscribedUser;
+  console.log("updatePost1", updatePost);
   
   let updateData;
-  if (!updatePost.some((id: any) => id.equals(userId))) {
+  if (updatePost && !updatePost.some((id: any) => id.equals(userId))) {
     updateData = {
       'premiumDetails.subscriptionFee': post.premiumDetails?.subscriptionFee,
       'premiumDetails.isPending': post.premiumDetails?.isPending, 
       'premiumDetails.subscribedUser': [...updatePost, payload.userId],
     };
   } 
-  const postUpdated = await Post.findByIdAndUpdate( payload.postId, { premiumDetails: updateData}, {new: true})
+  else {
+    updateData = updatePost
+  }
+  console.log("updatePost2", updateData);
+
+  const postUpdated = await Post.findByIdAndUpdate(
+    payload.postId, 
+    { $set: updateData },   // Use $set to update nested fields properly
+    { new: true }           // Return the updated document
+  );
+    console.log("update", postUpdated);
+  
   if(postUpdated){
-    const findPayment = Payment.findOne({userId: payload.userId, postId: payload.postId})
+    const findPayment = await Payment.findOne({userId: payload.userId, postId: payload.postId})
     if(!findPayment){
       await Payment.create(payload);
     }
@@ -38,7 +54,9 @@ const createPayment = async (payload: TPayment) => {
 };
 
 const getAllPaymentsFromDB = async () => {
-  const result = await Payment.find();
+  const result = await Payment.find().populate("userId").populate("postId");
+  console.log("result", result);
+  
   return result;
 };
 

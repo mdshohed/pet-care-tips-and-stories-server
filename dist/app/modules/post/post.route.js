@@ -19,7 +19,10 @@ router.post('/', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), multer_con
 router.get('/', post_controller_1.PostControllers.getAllPosts);
 router.get('/premium', post_controller_1.PostControllers.getPremiumPosts);
 router.get('/:id', post_controller_1.PostControllers.getPost);
+router.get('/me/:id', post_controller_1.PostControllers.getMyPost);
 router.put('/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), (0, validateRequest_1.default)(post_validation_1.PostValidation.updatePostValidationSchema), post_controller_1.PostControllers.updatePost);
 router.put('/likes/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), post_controller_1.PostControllers.updatePostLikes);
+router.put('/comments/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), post_controller_1.PostControllers.addCommentInPost);
+router.put('/premium/:id', post_controller_1.PostControllers.updatePremiumPost);
 router.delete('/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), post_controller_1.PostControllers.deletePost);
 exports.PostRoutes = router;

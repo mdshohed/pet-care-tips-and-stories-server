@@ -14,6 +14,7 @@ export type TUser = {
   profilePhoto?: string;
   follower?: TUser[],
   following?: TUser[],
+  isDeleted?: boolean,
   createdAt?: Date;
   updatedAt?: Date;
 };

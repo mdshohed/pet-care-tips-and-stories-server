@@ -58,6 +58,11 @@ const userSchema = new Schema<TUser, IUserModel>(
       required: false,
       default: [], 
     },
+    isDeleted: {
+      type: Boolean,
+      required: false,
+      default: false, 
+    },
   },
   {
     timestamps: true,

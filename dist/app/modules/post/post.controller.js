@@ -58,6 +58,16 @@ const getPost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, voi
         data: post,
     });
 }));
+const getMyPost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const postId = req.params.id;
+    const post = yield post_service_1.PostServices.getPostFromDB(postId);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: 'Post retrieved successfully',
+        data: post,
+    });
+}));
 const updatePost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const updatedPost = yield post_service_1.PostServices.updatePostInDB(id, req.body);
@@ -78,6 +88,27 @@ const updatePostLikes = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(voi
         data: updatedPost,
     });
 }));
+const addCommentInPost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield post_service_1.PostServices.addCommentsInToDB(id, req.body);
+    console.log("comment", result);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: 'Comment Added successfully',
+        data: result,
+    });
+}));
+const updatePremiumPost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const updatedPost = yield post_service_1.PostServices.updatePremiumPost(id);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: 'Premium Post updated successfully',
+        data: updatedPost,
+    });
+}));
 const deletePost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     yield post_service_1.PostServices.deletePostFromDB(id);
@@ -92,8 +123,11 @@ exports.PostControllers = {
     createPost,
     getAllPosts,
     getPost,
+    getMyPost,
     updatePost,
     deletePost,
     updatePostLikes,
+    addCommentInPost,
     getPremiumPosts,
+    updatePremiumPost,
 };

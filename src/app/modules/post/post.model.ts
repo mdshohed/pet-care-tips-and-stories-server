@@ -30,12 +30,13 @@ const commentsSchema = new Schema<TComments>({
 export const PremiumSchema = new Schema<TPremium>({
   isPending: {
     type: Boolean,
-    required: true,
+    required: false,
     default: true, 
   },
   subscriptionFee: {
     type: Number,
-    required: true,
+    required: false,
+    default: 0,
   },
   subscribedUser: {
     type: [Schema.Types.ObjectId],

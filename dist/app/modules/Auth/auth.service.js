@@ -21,6 +21,7 @@ const AppError_1 = __importDefault(require("../../errors/AppError"));
 const verifyJWT_1 = require("../../utils/verifyJWT");
 const user_constant_1 = require("../User/user.constant");
 const user_model_1 = require("../User/user.model");
+const emailSender_1 = require("../../utils/emailSender");
 const registerUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     // checking if the user is exist
     const user = yield user_model_1.User.isUserExistsByEmail(payload === null || payload === void 0 ? void 0 : payload.email);
@@ -137,9 +138,85 @@ const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
         accessToken,
     };
 });
+const forgetPassword = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    // checking if the user is exist
+    const user = yield user_model_1.User.isUserExistsByEmail(email);
+    if (!user) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'This user is not found !');
+    }
+    // checking if the user is already deleted
+    const isDeleted = user === null || user === void 0 ? void 0 : user.isDeleted;
+    if (isDeleted) {
+        throw new AppError_1.default(http_status_1.default.FORBIDDEN, 'This user is deleted !');
+    }
+    // checking if the user is blocked
+    const userStatus = user === null || user === void 0 ? void 0 : user.status;
+    if (userStatus === 'BLOCKED') {
+        throw new AppError_1.default(http_status_1.default.FORBIDDEN, 'This user is blocked ! !');
+    }
+    const jwtPayload = {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        mobileNumber: user.mobileNumber,
+        profilePhoto: user.profilePhoto,
+        follower: user.follower,
+        following: user.following,
+        role: user.role,
+        status: user.status
+    };
+    const accessToken = (0, verifyJWT_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.reset_password_expires_in);
+    const resetUILink = `${config_1.default.client_url}/reset-password?email=${user.email}&token=${accessToken}`;
+    // sendEmail( user.email, resetUILink ); 
+    const emailData = {
+        username: user.name,
+        resetLink: resetUILink
+    };
+    const emailTemplate = yield emailSender_1.EmailHelper.createEmailContent(emailData, 'claimNotification');
+    yield emailSender_1.EmailHelper.sendEmail(user.email, emailTemplate, 'Reset your password within 10 mins!');
+    return user;
+    // console.log(resetUILink);
+});
+const resetPassword = (payload, token) => __awaiter(void 0, void 0, void 0, function* () {
+    // checking if the user is exist
+    const user = yield user_model_1.User.isUserExistsByEmail(payload.email);
+    if (!user) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'This user is not found !');
+    }
+    const isDeleted = user === null || user === void 0 ? void 0 : user.isDeleted;
+    if (isDeleted) {
+        throw new AppError_1.default(http_status_1.default.FORBIDDEN, 'This user is deleted !');
+    }
+    // checking if the user is blocked
+    const userStatus = user === null || user === void 0 ? void 0 : user.status;
+    if (userStatus === 'BLOCKED') {
+        throw new AppError_1.default(http_status_1.default.FORBIDDEN, 'This user is blocked ! !');
+    }
+    const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_secret);
+    if (payload.email !== decoded.email) {
+        throw new AppError_1.default(http_status_1.default.FORBIDDEN, 'Your are forbidden!');
+    }
+    //hash new password
+    const newHashedPassword = yield bcryptjs_1.default.hash(payload.newPassword, Number(config_1.default.bcrypt_salt_rounds));
+    console.log("email", decoded);
+    const result = yield user_model_1.User.findOneAndUpdate({
+        email: decoded.email,
+        role: decoded.role,
+    }, {
+        password: newHashedPassword,
+        // needsPasswordChange: false,
+        // passwordChangedAt: new Date(),
+    }, { new: true });
+    if (!result) {
+        throw new Error('Something Went wrong!');
+    }
+    return result;
+});
 exports.AuthServices = {
     registerUser,
     loginUser,
     changePassword,
     refreshToken,
+    forgetPassword,
+    resetPassword,
 };

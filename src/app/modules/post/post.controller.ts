@@ -46,7 +46,20 @@ const getPremiumPosts = catchAsync(async (req, res) => {
 });
 
 const getPost = catchAsync(async (req, res) => {
-  const postId = req.params.id;
+  const postId = req.params.id; 
+   
+  const post = await PostServices.getPostFromDB(postId);
+  
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Post retrieved successfully',
+    data: post,
+  });
+});
+
+const getMyPost = catchAsync(async (req, res) => {
+  const postId = req.params.id;  
   const post = await PostServices.getPostFromDB(postId);
 
   sendResponse(res, {
@@ -81,6 +94,32 @@ const updatePostLikes = catchAsync(async (req, res) => {
   });
 });
 
+const addCommentInPost = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  
+  const result = await PostServices.addCommentsInToDB(id, req.body);
+  console.log("comment", result);
+  
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Comment Added successfully',
+    data: result,
+  });
+});
+
+const updatePremiumPost = catchAsync(async (req, res) => {
+  const { id } = req.params;    
+  const updatedPost = await PostServices.updatePremiumPost(id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Premium Post updated successfully',
+    data: updatedPost,
+  });
+});
+
 const deletePost = catchAsync(async (req, res) => {
   const { id } = req.params;
   await PostServices.deletePostFromDB(id);
@@ -97,8 +136,11 @@ export const PostControllers = {
   createPost,
   getAllPosts,
   getPost,
+  getMyPost,
   updatePost,
   deletePost,
   updatePostLikes,
+  addCommentInPost,
   getPremiumPosts,
+  updatePremiumPost,
 };

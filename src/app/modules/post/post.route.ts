@@ -26,6 +26,7 @@ router.get('/', PostControllers.getAllPosts);
 router.get('/premium', PostControllers.getPremiumPosts);
 
 router.get('/:id', PostControllers.getPost);
+router.get('/me/:id', PostControllers.getMyPost);
 
 router.put(
   '/:id',
@@ -39,6 +40,15 @@ router.put(
   auth(USER_ROLE.USER),
   PostControllers.updatePostLikes
 );
+
+router.put(
+  '/comments/:id',
+  auth(USER_ROLE.USER),
+  PostControllers.addCommentInPost
+);
+
+router.put('/premium/:id', PostControllers.updatePremiumPost);
+
 
 router.delete('/:id', auth(USER_ROLE.USER), PostControllers.deletePost);
 
