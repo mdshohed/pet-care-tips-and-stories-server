@@ -60,7 +60,7 @@ const getPost = catchAsync(async (req, res) => {
 
 const getMyPost = catchAsync(async (req, res) => {
   const postId = req.params.id;  
-  const post = await PostServices.getPostFromDB(postId);
+  const post = await PostServices.getMyPostFromDB(postId);
 
   sendResponse(res, {
     success: true,

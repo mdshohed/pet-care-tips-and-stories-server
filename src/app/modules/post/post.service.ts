@@ -55,24 +55,17 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
 const getPremiumPostsFromDB = async () => {
   
   const result = await Post.find( { isPremium: true} )
-    .populate('user')
-    .populate('category');
-  
+  .populate('user').populate('category').populate('comments.comment.user')
   return result;
 };
 
 const getPostFromDB = async (id: string) => {
-  
-  const result = await Post.findById(id)
-    .populate('user')
-    .populate('category');
+  const result = await Post.findById(id).populate('user').populate('category').populate('comments.comment.user');
   return result;
 };
 
 const getMyPostFromDB = async (id: string) => {
-  const result = await Post.findById( {user: id})
-    .populate('user')
-    .populate('category');
+  const result = await Post.find( {user: id}).populate('user').populate('category').populate('comments.comment.user');
   return result;
 };
 
