@@ -65,6 +65,18 @@ const LikesSchema = new mongoose_1.Schema({
         required: false,
         default: [],
     },
+    upVote: {
+        type: [mongoose_1.Schema.Types.ObjectId],
+        ref: "User",
+        required: false,
+        default: [],
+    },
+    downVote: {
+        type: [mongoose_1.Schema.Types.ObjectId],
+        ref: "User",
+        required: false,
+        default: [],
+    },
 });
 const postSchema = new mongoose_1.Schema({
     title: { type: String, required: true },

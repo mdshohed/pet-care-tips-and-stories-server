@@ -49,7 +49,6 @@ const seed = () => __awaiter(void 0, void 0, void 0, function* () {
                 name: postCategory_constant_1.POST_CATEGORY.tips,
                 postCount: 0,
             });
-            console.log('Post Category1 created successfully...');
         }
         const category2 = yield postCategory_model_1.PostCategory.findOne({
             name: postCategory_constant_1.POST_CATEGORY.stories,
@@ -59,7 +58,6 @@ const seed = () => __awaiter(void 0, void 0, void 0, function* () {
                 name: postCategory_constant_1.POST_CATEGORY.stories,
                 postCount: 0,
             });
-            console.log('Post Category2 created successfully...');
         }
     }
     catch (error) {

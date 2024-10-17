@@ -17,16 +17,18 @@ const post_utils_1 = require("./post.utils");
 const createPostIntoDB = (payload, images) => __awaiter(void 0, void 0, void 0, function* () {
     const { itemImages } = images;
     payload.images = itemImages.map((image) => image.path);
-    payload.likes = { count: 0, user: [] };
+    payload.likes = { count: 0, user: [], upVote: [], downVote: [] };
     payload.comments = { count: 0, comment: [] };
     const result = yield post_model_1.Post.create(payload);
     return result;
 });
 const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("value1", query);
     query = (yield (0, post_utils_1.SearchPostByUserQueryMaker)(query)) || query;
     // Date range search
     query = (yield (0, post_utils_1.SearchPostByDateRangeQueryMaker)(query)) || query;
     query = (yield (0, post_utils_1.SearchPostByCategoryQueryMaker)(query)) || query;
+    console.log("query", query);
     const itemQuery = new QueryBuilder_1.QueryBuilder(post_model_1.Post.find().populate('user').populate('category').populate('comments.comment.user'), query)
         .filter()
         .search(post_constant_1.PostSearchableFields)
@@ -42,6 +44,7 @@ const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function*
     // })
     //   .populate('user')
     //   .populate('category');
+    // console.log("value", query);
     const newResult = result.filter((post) => { var _a; return (post === null || post === void 0 ? void 0 : post.isPremium) === false || ((_a = post.premiumDetails) === null || _a === void 0 ? void 0 : _a.isPending) === false; });
     return newResult;
 });
@@ -118,9 +121,11 @@ const updatePremiumPost = (params) => __awaiter(void 0, void 0, void 0, function
     return result;
 });
 const mongoose_1 = require("mongoose");
-const updatePostLikesInDB = (postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+const user_model_1 = require("../User/user.model");
+const updatePostLikesInDBX = (postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const userId = new mongoose_1.Types.ObjectId(payload.userId);
+    console.log("type", payload.type);
     const findPost = yield post_model_1.Post.findById(postId);
     if (!findPost) {
         throw new Error(`Post with ID ${postId} not found.`);
@@ -141,6 +146,79 @@ const updatePostLikesInDB = (postId, payload) => __awaiter(void 0, void 0, void 
         };
     }
     const result = yield post_model_1.Post.findByIdAndUpdate(postId, updateData, { new: true });
+    return result;
+});
+const updatePostLikesInDB = (postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const userId = new mongoose_1.Types.ObjectId(payload.userId);
+    console.log("type", payload.type);
+    const findPost = yield post_model_1.Post.findById(postId);
+    if (!findPost) {
+        throw new Error(`Post with ID ${postId} not found.`);
+    }
+    const findUser = yield user_model_1.User.findById(payload.userId);
+    if (!findUser) {
+        throw new Error(`User with ID ${postId} not found.`);
+    }
+    const upVote = ((_a = findPost.likes) === null || _a === void 0 ? void 0 : _a.upVote) || [];
+    const downVote = ((_b = findPost.likes) === null || _b === void 0 ? void 0 : _b.downVote) || [];
+    const hasUserUpVote = upVote.some((id) => id.equals(userId));
+    const hasUserDownVote = downVote.some((id) => id.equals(userId));
+    let updateData;
+    if (hasUserDownVote || hasUserUpVote) {
+        if (hasUserUpVote) {
+            const newUpVote = upVote.filter((id) => id.toString() !== userId.toString());
+            if (payload.type === "Up") {
+                updateData = {
+                    'likes.count': findPost.likes.count - 1,
+                    'likes.upVote': [...newUpVote],
+                    'likes.downVote': [...downVote],
+                };
+            }
+            else {
+                updateData = {
+                    'likes.count': findPost.likes.count - 2,
+                    'likes.upVote': [...newUpVote],
+                    'likes.downVote': [...downVote, userId],
+                };
+            }
+        }
+        else {
+            const newDownVote = downVote.filter((id) => id.toString() !== userId.toString());
+            if (payload.type === "Down") {
+                updateData = {
+                    'likes.count': findPost.likes.count + 1,
+                    'likes.upVote': [...upVote],
+                    'likes.downVote': [...newDownVote],
+                };
+            }
+            else {
+                updateData = {
+                    'likes.count': findPost.likes.count + 2,
+                    'likes.upVote': [...upVote, userId],
+                    'likes.downVote': [...newDownVote],
+                };
+            }
+        }
+    }
+    else {
+        if (payload.type === "Up") {
+            updateData = {
+                'likes.count': findPost.likes.count + 1,
+                'likes.upVote': [...upVote, userId],
+                'likes.downVote': [...downVote],
+            };
+        }
+        else {
+            updateData = {
+                'likes.count': findPost.likes.count - 1,
+                'likes.upVote': [...upVote],
+                'likes.downVote': [...downVote, userId],
+            };
+        }
+    }
+    const result = yield post_model_1.Post.findByIdAndUpdate(postId, updateData, { new: true });
+    console.log("vote", updateData, result, upVote, downVote);
     return result;
 });
 const addCommentsInToDB = (postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
