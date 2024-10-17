@@ -37,7 +37,6 @@ export const seed = async () => {
         name: POST_CATEGORY.tips,
         postCount: 0,
       })
-      console.log('Post Category1 created successfully...');
     }
     const category2 = await PostCategory.findOne({
       name: POST_CATEGORY.stories,
@@ -47,7 +46,6 @@ export const seed = async () => {
         name: POST_CATEGORY.stories,
         postCount: 0,
       })
-      console.log('Post Category2 created successfully...');
     }
   } catch (error) {
     console.log('Error in seeding', error);

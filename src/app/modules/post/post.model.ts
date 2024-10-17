@@ -58,6 +58,18 @@ const LikesSchema = new Schema<TLikes>({
     required: false,
     default: [], 
   },
+  upVote: {
+    type: [Schema.Types.ObjectId],
+    ref: "User",
+    required: false,
+    default: [], 
+  },
+  downVote: {
+    type: [Schema.Types.ObjectId],
+    ref: "User",
+    required: false,
+    default: [], 
+  },
 });
 
 

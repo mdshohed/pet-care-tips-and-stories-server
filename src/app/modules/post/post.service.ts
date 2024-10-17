@@ -14,19 +14,21 @@ import {
 const createPostIntoDB = async (payload: TPost, images: TImageFiles) => {
   const { itemImages } = images;
   payload.images = itemImages.map((image) => image.path);
-  payload.likes = {count: 0, user: []}; 
+  payload.likes = {count: 0, user: [], upVote: [], downVote: []}; 
   payload.comments = { count: 0, comment: []}
   const result = await Post.create(payload);
   return result;
 };
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
-  
+  console.log("value1", query);
+
   query = (await SearchPostByUserQueryMaker(query)) || query;
   // Date range search
   query = (await SearchPostByDateRangeQueryMaker(query)) || query;
 
   query = (await SearchPostByCategoryQueryMaker(query)) || query;
+  console.log("query", query);
 
   const itemQuery = new QueryBuilder(
     Post.find().populate('user').populate('category').populate('comments.comment.user'),
@@ -48,7 +50,8 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
   // })
   //   .populate('user')
   //   .populate('category');
-  
+  // console.log("value", query);
+
   const newResult = result.filter((post)=>post?.isPremium===false||post.premiumDetails?.isPending===false)
 
   return newResult;
@@ -86,7 +89,7 @@ const getSearchPosts = async (query: Record<string, unknown>) => {
   // })
   //   .populate('user')
   //   .populate('category');
-
+  
   const newResult = result.filter((post)=>post.premiumDetails?.isPending !==false)
   return newResult;
 };
@@ -153,10 +156,10 @@ const updatePremiumPost = async (params: string) => {
 import { ObjectId, Types } from 'mongoose';
 import { User } from '../User/user.model';
 
-const updatePostLikesInDB = async (postId: string, payload: { userId: string }) => {
+const updatePostLikesInDBX = async (postId: string, payload: { userId: string, type:string }) => {
   const userId = new Types.ObjectId(payload.userId);  
+  console.log("type", payload.type);
   
-
   const findPost = await Post.findById(postId);
   if (!findPost) {
     throw new Error(`Post with ID ${postId} not found.`);
@@ -180,6 +183,83 @@ const updatePostLikesInDB = async (postId: string, payload: { userId: string }) 
   }
 
   const result = await Post.findByIdAndUpdate(postId, updateData, { new: true });
+  return result;
+};
+
+const updatePostLikesInDB = async (postId: string, payload: { userId: string, type:string }) => {
+  const userId = new Types.ObjectId(payload.userId);  
+  console.log("type", payload.type);
+  
+  const findPost = await Post.findById(postId);
+  if (!findPost) {
+    throw new Error(`Post with ID ${postId} not found.`);
+  }
+  const findUser = await User.findById(payload.userId);
+  if (!findUser) {
+    throw new Error(`User with ID ${postId} not found.`);
+  }
+
+  const upVote = findPost.likes?.upVote || [];  
+  const downVote = findPost.likes?.downVote || [];  
+  
+  const hasUserUpVote = upVote.some((id: any) => id.equals(userId));
+  const hasUserDownVote = downVote.some((id: any) => id.equals(userId));
+  
+  let updateData;
+  if(hasUserDownVote||hasUserUpVote){
+    if(hasUserUpVote){
+      const newUpVote = upVote.filter((id: any) => id.toString() !== userId.toString());
+      if(payload.type==="Up"){
+        updateData = {
+          'likes.count': findPost.likes!.count - 1,
+          'likes.upVote': [...newUpVote], 
+          'likes.downVote': [...downVote], 
+        }
+      }
+      else{
+        updateData = {
+          'likes.count': findPost.likes!.count - 2,
+          'likes.upVote': [...newUpVote], 
+          'likes.downVote': [...downVote, userId], 
+        }
+      }
+    }
+    else{
+      const newDownVote = downVote.filter((id: any) => id.toString() !== userId.toString());
+      if(payload.type==="Down"){
+        updateData = {
+          'likes.count': findPost.likes!.count + 1,
+          'likes.upVote': [...upVote], 
+          'likes.downVote': [...newDownVote], 
+        }
+      }
+      else{
+        updateData = {
+          'likes.count': findPost.likes!.count + 2,
+          'likes.upVote': [...upVote, userId], 
+          'likes.downVote': [...newDownVote], 
+        }
+      }
+    }
+  }
+  else{
+    if(payload.type==="Up"){
+      updateData = {
+        'likes.count': findPost.likes!.count + 1,
+        'likes.upVote': [...upVote, userId], 
+        'likes.downVote': [...downVote], 
+      }
+    }
+    else{
+      updateData = {
+        'likes.count': findPost.likes!.count - 1,
+        'likes.upVote': [...upVote], 
+        'likes.downVote': [...downVote, userId], 
+      }
+    }
+  }
+  const result = await Post.findByIdAndUpdate(postId, updateData, { new: true });
+  console.log("vote", updateData, result, upVote, downVote);
   return result;
 };
 

@@ -15,6 +15,8 @@ export class QueryBuilder<T> {
     if (this.query?.searchTerm) {
       searchTerm = this.query.searchTerm as string;
     }
+    console.log("search", this.query.searchTerm);
+    
     // {title: {$regex: searchTerm}}
     // {genre: {$regex: searchTerm}}
     this.modelQuery = this.modelQuery.find({
@@ -28,7 +30,7 @@ export class QueryBuilder<T> {
     return this;
   }
   paginate() {
-    let limit: number = Number(this.query?.limit );
+    let limit: number = Number(this.query?.limit || 10);
 
     let skip: number = 0;
 

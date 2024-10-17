@@ -35,8 +35,9 @@ const getAllPostsForAdmin = catchAsync(async (req, res) => {
 });
 
 const getAllPosts = catchAsync(async (req, res) => {
-  const post = await PostServices.getAllPostsFromDB(req.query);
   
+  const post = await PostServices.getAllPostsFromDB(req.query);
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -55,7 +56,7 @@ const getSearchPostFromDB = catchAsync(async (req, res) => {
     // searchTerm as string
     req.query
   );  
-
+  
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

@@ -25,6 +25,8 @@ export type TPremium = {
 
 export type TLikes = {
   count: number,
+  upVote: ObjectId[], 
+  downVote: ObjectId[], 
   user: ObjectId[]
 }
 
