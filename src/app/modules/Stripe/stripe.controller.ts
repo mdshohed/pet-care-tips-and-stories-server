@@ -16,7 +16,6 @@ const createPayment = catchAsync(async (req, res) => {
       'card'
     ],    
   });
-  console.log("data", paymentIntent.client_secret);
   
   res.send({
     clientSecret: paymentIntent.client_secret,

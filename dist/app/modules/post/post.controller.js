@@ -30,6 +30,15 @@ const createPost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, 
         data: post,
     });
 }));
+const getAllPostsForAdmin = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const post = yield post_service_1.PostServices.getAllPostsForAdminFromDB();
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: 'Post retrieved successfully',
+        data: post,
+    });
+}));
 const getAllPosts = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield post_service_1.PostServices.getAllPostsFromDB(req.query);
     (0, sendResponse_1.default)(res, {
@@ -37,6 +46,20 @@ const getAllPosts = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0,
         statusCode: http_status_1.default.OK,
         message: 'Post retrieved successfully',
         data: post,
+    });
+}));
+const getSearchPostFromDB = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { searchTerm, limit } = req.query;
+    const numberLimit = Number(limit) || 10;
+    const result = yield post_service_1.PostServices.getSearchPosts(
+    // numberLimit
+    // searchTerm as string
+    req.query);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Items Retrieved Successfully',
+        data: result,
     });
 }));
 const getPremiumPosts = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -60,7 +83,7 @@ const getPost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, voi
 }));
 const getMyPost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postId = req.params.id;
-    const post = yield post_service_1.PostServices.getPostFromDB(postId);
+    const post = yield post_service_1.PostServices.getMyPostFromDB(postId);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,
@@ -91,7 +114,6 @@ const updatePostLikes = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(voi
 const addCommentInPost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield post_service_1.PostServices.addCommentsInToDB(id, req.body);
-    console.log("comment", result);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,
@@ -122,6 +144,8 @@ const deletePost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, 
 exports.PostControllers = {
     createPost,
     getAllPosts,
+    getAllPostsForAdmin,
+    getSearchPostFromDB,
     getPost,
     getMyPost,
     updatePost,

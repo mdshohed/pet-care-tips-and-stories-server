@@ -296,7 +296,6 @@ const resetPassword = async (payload: { email: string, newPassword: string}, tok
     payload.newPassword,
     Number(config.bcrypt_salt_rounds),
   );
-  console.log("email", decoded);
   
   const result = await User.findOneAndUpdate(
     {

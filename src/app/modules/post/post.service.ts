@@ -21,6 +21,45 @@ const createPostIntoDB = async (payload: TPost, images: TImageFiles) => {
 };
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
+  
+  query = (await SearchPostByUserQueryMaker(query)) || query;
+  // Date range search
+  query = (await SearchPostByDateRangeQueryMaker(query)) || query;
+
+  query = (await SearchPostByCategoryQueryMaker(query)) || query;
+
+  const itemQuery = new QueryBuilder(
+    Post.find().populate('user').populate('category').populate('comments.comment.user'),
+    query
+  )
+    .filter()
+    .search(PostSearchableFields)
+    .sort()
+    // .paginate()
+    .fields();
+
+  const result = await itemQuery.modelQuery;
+
+  // const result = await Post.find({
+  //   $or: [
+  //     { isPremium: false },
+  //     { isPremium: true, 'premiumDetails.isPending': false }
+  //   ]
+  // })
+  //   .populate('user')
+  //   .populate('category');
+  
+  const newResult = result.filter((post)=>post?.isPremium===false||post.premiumDetails?.isPending===false)
+
+  return newResult;
+};
+const getAllPostsForAdminFromDB = async () => {
+  const result = await Post.find().populate('user').populate('category').populate('comments.comment.user')
+  return result;
+};
+
+const getSearchPosts = async (query: Record<string, unknown>) => {
+  
   query = (await SearchPostByUserQueryMaker(query)) || query;
   // Date range search
   query = (await SearchPostByDateRangeQueryMaker(query)) || query;
@@ -88,7 +127,6 @@ const updatePremiumPost = async (params: string) => {
     throw new Error(`Post with Id ${params} not found!`);
   }
   let updatePost = post?.premiumDetails;
-  console.log("update", updatePost);
   
   if(post.premiumDetails){
      updatePost = {
@@ -97,7 +135,6 @@ const updatePremiumPost = async (params: string) => {
       subscribedUser: post.premiumDetails?.subscribedUser
     }
   }
-  console.log("id", updatePost);
   
   const result = await Post.findByIdAndUpdate(
     params, 
@@ -175,16 +212,12 @@ const addCommentsInToDB = async (postId: string, payload: { userId: string, text
       throw new Error(`Post with ID ${postId} not found.`);
     }
 
-    console.log("Updated Post Result:", result);
-
     return result;
   } catch (error) {
     console.error('Error updating comments:', error);
     throw error;
   }
 };
-
-
 
 
 const deletePostFromDB = async (postId: string) => {
@@ -200,6 +233,7 @@ const deletePostFromDB = async (postId: string) => {
 export const PostServices = {
   createPostIntoDB,
   getAllPostsFromDB,
+  getAllPostsForAdminFromDB,
   getPostFromDB,
   getMyPostFromDB,
   updatePostInDB,
@@ -208,4 +242,5 @@ export const PostServices = {
   addCommentsInToDB,
   getPremiumPostsFromDB, 
   updatePremiumPost,
+  getSearchPosts,
 };

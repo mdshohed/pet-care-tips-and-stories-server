@@ -11,14 +11,15 @@ const createUser = async (payload: TUser) => {
 };
 
 const getAllUsersFromDB = async (query: Record<string, unknown>) => {
-  const users = new QueryBuilder(User.find(), query)
-    .fields()
-    .paginate()
-    .sort()
-    .filter()
-    .search(UserSearchableFields);
+  // const users = new QueryBuilder(User.find(), query)
+  //   .fields()
+  //   .paginate()
+  //   .sort()
+  //   .filter()
+  //   .search(UserSearchableFields);
 
-  const result = await users.modelQuery;
+  // const result = await users.modelQuery;
+  const result = await User.find(); 
 
   return result;
 };
@@ -51,10 +52,8 @@ const updateFriendConnectionInToDB = async (id: string, payload: { connectUser: 
   if (!user.following?.some((id: any) => id.equals(secondUserId))) {
     followingData = [...followingUser, secondUserId]; 
   } else {
-    console.log("value", followingUser, secondUser);
     followingData = followingUser.filter((id: any) => !id.equals(secondUserId));
   }
-  console.log("updateFollowing",followingData);
 
   // follower part
 
@@ -63,7 +62,6 @@ const updateFriendConnectionInToDB = async (id: string, payload: { connectUser: 
   if (! secondUser.follower?.some((id: any) => id.equals(firstUserId))) {
     followerData = [...followerUser, firstUserId]; 
   } else {
-    console.log("value", followingUser, secondUser);
     followerData = followerUser.filter((id: any) => !id.equals(firstUserId));
   }
 

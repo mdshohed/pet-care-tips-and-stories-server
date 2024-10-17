@@ -198,7 +198,6 @@ const resetPassword = (payload, token) => __awaiter(void 0, void 0, void 0, func
     }
     //hash new password
     const newHashedPassword = yield bcryptjs_1.default.hash(payload.newPassword, Number(config_1.default.bcrypt_salt_rounds));
-    console.log("email", decoded);
     const result = yield user_model_1.User.findOneAndUpdate({
         email: decoded.email,
         role: decoded.role,

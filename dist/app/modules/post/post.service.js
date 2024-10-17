@@ -42,25 +42,47 @@ const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function*
     // })
     //   .populate('user')
     //   .populate('category');
+    const newResult = result.filter((post) => { var _a; return (post === null || post === void 0 ? void 0 : post.isPremium) === false || ((_a = post.premiumDetails) === null || _a === void 0 ? void 0 : _a.isPending) === false; });
+    return newResult;
+});
+const getAllPostsForAdminFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield post_model_1.Post.find().populate('user').populate('category').populate('comments.comment.user');
+    return result;
+});
+const getSearchPosts = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    query = (yield (0, post_utils_1.SearchPostByUserQueryMaker)(query)) || query;
+    // Date range search
+    query = (yield (0, post_utils_1.SearchPostByDateRangeQueryMaker)(query)) || query;
+    query = (yield (0, post_utils_1.SearchPostByCategoryQueryMaker)(query)) || query;
+    const itemQuery = new QueryBuilder_1.QueryBuilder(post_model_1.Post.find().populate('user').populate('category').populate('comments.comment.user'), query)
+        .filter()
+        .search(post_constant_1.PostSearchableFields)
+        .sort()
+        // .paginate()
+        .fields();
+    const result = yield itemQuery.modelQuery;
+    // const result = await Post.find({
+    //   $or: [
+    //     { isPremium: false },
+    //     { isPremium: true, 'premiumDetails.isPending': false }
+    //   ]
+    // })
+    //   .populate('user')
+    //   .populate('category');
     const newResult = result.filter((post) => { var _a; return ((_a = post.premiumDetails) === null || _a === void 0 ? void 0 : _a.isPending) !== false; });
     return newResult;
 });
 const getPremiumPostsFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield post_model_1.Post.find({ isPremium: true })
-        .populate('user')
-        .populate('category');
+        .populate('user').populate('category').populate('comments.comment.user');
     return result;
 });
 const getPostFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield post_model_1.Post.findById(id)
-        .populate('user')
-        .populate('category');
+    const result = yield post_model_1.Post.findById(id).populate('user').populate('category').populate('comments.comment.user');
     return result;
 });
 const getMyPostFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield post_model_1.Post.findById({ user: id })
-        .populate('user')
-        .populate('category');
+    const result = yield post_model_1.Post.find({ user: id }).populate('user').populate('category').populate('comments.comment.user');
     return result;
 });
 const updatePostInDB = (postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
@@ -82,7 +104,6 @@ const updatePremiumPost = (params) => __awaiter(void 0, void 0, void 0, function
         throw new Error(`Post with Id ${params} not found!`);
     }
     let updatePost = post === null || post === void 0 ? void 0 : post.premiumDetails;
-    console.log("update", updatePost);
     if (post.premiumDetails) {
         updatePost = {
             isPending: !((_a = post.premiumDetails) === null || _a === void 0 ? void 0 : _a.isPending),
@@ -90,7 +111,6 @@ const updatePremiumPost = (params) => __awaiter(void 0, void 0, void 0, function
             subscribedUser: (_b = post.premiumDetails) === null || _b === void 0 ? void 0 : _b.subscribedUser
         };
     }
-    console.log("id", updatePost);
     const result = yield post_model_1.Post.findByIdAndUpdate(params, { premiumDetails: updatePost }, { new: true });
     if (!result) {
         throw new Error(`Post update Error.`);
@@ -147,7 +167,6 @@ const addCommentsInToDB = (postId, payload) => __awaiter(void 0, void 0, void 0,
         if (result.matchedCount === 0) {
             throw new Error(`Post with ID ${postId} not found.`);
         }
-        console.log("Updated Post Result:", result);
         return result;
     }
     catch (error) {
@@ -166,6 +185,7 @@ const deletePostFromDB = (postId) => __awaiter(void 0, void 0, void 0, function*
 exports.PostServices = {
     createPostIntoDB,
     getAllPostsFromDB,
+    getAllPostsForAdminFromDB,
     getPostFromDB,
     getMyPostFromDB,
     updatePostInDB,
@@ -174,4 +194,5 @@ exports.PostServices = {
     addCommentsInToDB,
     getPremiumPostsFromDB,
     updatePremiumPost,
+    getSearchPosts,
 };

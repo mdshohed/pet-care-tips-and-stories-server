@@ -11,21 +11,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserServices = void 0;
 const mongoose_1 = require("mongoose");
-const QueryBuilder_1 = require("../../builder/QueryBuilder");
-const user_constant_1 = require("./user.constant");
 const user_model_1 = require("./user.model");
 const createUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.create(payload);
     return user;
 });
 const getAllUsersFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = new QueryBuilder_1.QueryBuilder(user_model_1.User.find(), query)
-        .fields()
-        .paginate()
-        .sort()
-        .filter()
-        .search(user_constant_1.UserSearchableFields);
-    const result = yield users.modelQuery;
+    // const users = new QueryBuilder(User.find(), query)
+    //   .fields()
+    //   .paginate()
+    //   .sort()
+    //   .filter()
+    //   .search(UserSearchableFields);
+    // const result = await users.modelQuery;
+    const result = yield user_model_1.User.find();
     return result;
 });
 const getSingleUserFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -53,10 +52,8 @@ const updateFriendConnectionInToDB = (id, payload) => __awaiter(void 0, void 0, 
         followingData = [...followingUser, secondUserId];
     }
     else {
-        console.log("value", followingUser, secondUser);
         followingData = followingUser.filter((id) => !id.equals(secondUserId));
     }
-    console.log("updateFollowing", followingData);
     // follower part
     const followerUser = secondUser.follower || [];
     let followerData;
@@ -64,7 +61,6 @@ const updateFriendConnectionInToDB = (id, payload) => __awaiter(void 0, void 0, 
         followerData = [...followerUser, firstUserId];
     }
     else {
-        console.log("value", followingUser, secondUser);
         followerData = followerUser.filter((id) => !id.equals(firstUserId));
     }
     const success = yield user_model_1.User.findByIdAndUpdate(id, { following: followingData }, { new: true });

@@ -9,7 +9,6 @@ import { Payment } from "./payment.model";
 const createPayment = async (payload: TPayment) => {
   const userId = new Types.ObjectId(payload.userId);  
   const post = await Post.findById(payload.postId)
-  console.log("post", payload.postId, post);
   
   if(!post){
     throw new Error(`Post with ID ${payload.postId} not found.`);
@@ -22,7 +21,6 @@ const createPayment = async (payload: TPayment) => {
     throw new Error(`Post Premium Details Not Found!`);
   }
   const updatePost = post.premiumDetails.subscribedUser;
-  console.log("updatePost1", updatePost);
   
   let updateData;
   if (updatePost && !updatePost.some((id: any) => id.equals(userId))) {
@@ -35,14 +33,12 @@ const createPayment = async (payload: TPayment) => {
   else {
     updateData = updatePost
   }
-  console.log("updatePost2", updateData);
 
   const postUpdated = await Post.findByIdAndUpdate(
     payload.postId, 
     { $set: updateData },   // Use $set to update nested fields properly
     { new: true }           // Return the updated document
   );
-    console.log("update", postUpdated);
   
   if(postUpdated){
     const findPayment = await Payment.findOne({userId: payload.userId, postId: payload.postId})
@@ -55,7 +51,6 @@ const createPayment = async (payload: TPayment) => {
 
 const getAllPaymentsFromDB = async () => {
   const result = await Payment.find().populate("userId").populate("postId");
-  console.log("result", result);
   
   return result;
 };

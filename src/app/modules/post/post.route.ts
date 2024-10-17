@@ -22,7 +22,9 @@ router.post(
   PostControllers.createPost
 );
 
+router.get('/admin', PostControllers.getAllPostsForAdmin);
 router.get('/', PostControllers.getAllPosts);
+router.get('/search-post', PostControllers.getSearchPostFromDB);
 router.get('/premium', PostControllers.getPremiumPosts);
 
 router.get('/:id', PostControllers.getPost);

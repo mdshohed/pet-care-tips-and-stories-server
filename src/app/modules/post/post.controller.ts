@@ -23,6 +23,17 @@ const createPost = catchAsync(async (req, res) => {
   });
 });
 
+const getAllPostsForAdmin = catchAsync(async (req, res) => {
+  const post = await PostServices.getAllPostsForAdminFromDB();
+  
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Post retrieved successfully',
+    data: post,
+  });
+});
+
 const getAllPosts = catchAsync(async (req, res) => {
   const post = await PostServices.getAllPostsFromDB(req.query);
   
@@ -31,6 +42,25 @@ const getAllPosts = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     message: 'Post retrieved successfully',
     data: post,
+  });
+});
+
+const getSearchPostFromDB = catchAsync(async (req, res) => {
+  const { searchTerm, limit } = req.query;
+
+  const numberLimit = Number(limit) || 10;
+
+  const result = await PostServices.getSearchPosts(
+    // numberLimit
+    // searchTerm as string
+    req.query
+  );  
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Items Retrieved Successfully',
+    data: result,
   });
 });
 
@@ -98,7 +128,6 @@ const addCommentInPost = catchAsync(async (req, res) => {
   const { id } = req.params;
   
   const result = await PostServices.addCommentsInToDB(id, req.body);
-  console.log("comment", result);
   
   sendResponse(res, {
     success: true,
@@ -135,6 +164,8 @@ const deletePost = catchAsync(async (req, res) => {
 export const PostControllers = {
   createPost,
   getAllPosts,
+  getAllPostsForAdmin,
+  getSearchPostFromDB,
   getPost,
   getMyPost,
   updatePost,

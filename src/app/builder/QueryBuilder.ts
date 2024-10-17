@@ -28,7 +28,7 @@ export class QueryBuilder<T> {
     return this;
   }
   paginate() {
-    let limit: number = Number(this.query?.limit || 10);
+    let limit: number = Number(this.query?.limit );
 
     let skip: number = 0;
 

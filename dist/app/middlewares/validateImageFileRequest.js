@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const catchAsync_1 = require("../utils/catchAsync");
 const validateImageFileRequest = (schema) => {
     return (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log("data", req.files);
         const parsedFile = yield schema.parseAsync({
             files: req.files,
         });
