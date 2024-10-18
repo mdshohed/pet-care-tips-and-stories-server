@@ -88,7 +88,6 @@ const forgetPassword = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void
 const refreshToken = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { refreshToken } = req.cookies;
     const result = yield auth_service_1.AuthServices.refreshToken(refreshToken);
-    console.log('accessToken', result);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,

@@ -21,14 +21,12 @@ const createPostIntoDB = async (payload: TPost, images: TImageFiles) => {
 };
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
-  console.log("value1", query);
 
   query = (await SearchPostByUserQueryMaker(query)) || query;
   // Date range search
   query = (await SearchPostByDateRangeQueryMaker(query)) || query;
 
   query = (await SearchPostByCategoryQueryMaker(query)) || query;
-  console.log("query", query);
 
   const itemQuery = new QueryBuilder(
     Post.find().populate('user').populate('category').populate('comments.comment.user'),
@@ -158,7 +156,6 @@ import { User } from '../User/user.model';
 
 const updatePostLikesInDBX = async (postId: string, payload: { userId: string, type:string }) => {
   const userId = new Types.ObjectId(payload.userId);  
-  console.log("type", payload.type);
   
   const findPost = await Post.findById(postId);
   if (!findPost) {
@@ -188,7 +185,6 @@ const updatePostLikesInDBX = async (postId: string, payload: { userId: string, t
 
 const updatePostLikesInDB = async (postId: string, payload: { userId: string, type:string }) => {
   const userId = new Types.ObjectId(payload.userId);  
-  console.log("type", payload.type);
   
   const findPost = await Post.findById(postId);
   if (!findPost) {
@@ -226,6 +222,8 @@ const updatePostLikesInDB = async (postId: string, payload: { userId: string, ty
     }
     else{
       const newDownVote = downVote.filter((id: any) => id.toString() !== userId.toString());
+      // console.log("payload", payload.type, newDownVote, u);
+      
       if(payload.type==="Down"){
         updateData = {
           'likes.count': findPost.likes!.count + 1,
@@ -258,9 +256,29 @@ const updatePostLikesInDB = async (postId: string, payload: { userId: string, ty
       }
     }
   }
+  console.log("value", updateData);
+  
   const result = await Post.findByIdAndUpdate(postId, updateData, { new: true });
-  console.log("vote", updateData, result, upVote, downVote);
   return result;
+};
+
+
+
+
+const deletePostFromDB = async (postId: string) => {
+  const result = await Post.findByIdAndDelete(postId);
+  // const deletedPostId = result?._id;
+  // if (deletedPostId) {
+  //   await deleteDocumentFromIndex('posts', deletedPostId.toString());
+  // }
+
+  return result;
+};
+
+// comments services operation 
+const getComments = async (id: string) => {
+  // const result = await Post.find( {user: id}).populate('user').populate('category').populate('comments.comment.user');
+  // return result;
 };
 
 const addCommentsInToDB = async (postId: string, payload: { userId: string, text: string, postId: string }) => {
@@ -299,16 +317,68 @@ const addCommentsInToDB = async (postId: string, payload: { userId: string, text
   }
 };
 
+const updateComments = async (postId: string, payload: { index: number; text: string }) => {
+  try {
+    const postObjectId = new Types.ObjectId(postId);
 
-const deletePostFromDB = async (postId: string) => {
-  const result = await Post.findByIdAndDelete(postId);
-  // const deletedPostId = result?._id;
-  // if (deletedPostId) {
-  //   await deleteDocumentFromIndex('posts', deletedPostId.toString());
-  // }
+    const result = await Post.updateOne(
+      { _id: postObjectId },
+      {
+        $set: {
+          [`comments.comment.${payload.index}.text`]: payload.text, // Use array indexing to update the comment's text
+        },
+      }
+    );
 
-  return result;
+    if (result.matchedCount === 0) {
+      throw new Error(`Post with ID ${postId} not found.`);
+    }
+
+    if (result.modifiedCount === 0) {
+      throw new Error(`Comment at index ${payload.index} could not be updated.`);
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Error updating comment:', error);
+    throw error;
+  }
 };
+
+const deleteComments = async (postId: string, payload: { index: number }) => {
+  try {
+    const result = await Post.updateOne(
+      { _id: new Types.ObjectId(postId) },
+      [
+        {
+          $set: {
+            // Use $concatArrays to reconstruct the array without the comment at the specified index
+            'comments.comment': {
+              $concatArrays: [
+                { $slice: ['$comments.comment', payload.index] }, // Get elements before the index
+                { $slice: ['$comments.comment', { $add: [payload.index, 1] }, { $size: '$comments.comment' }] } // Get elements after the index
+              ],
+            },
+            // Decrement the comment count
+            'comments.count': { $subtract: [{ $ifNull: ['$comments.count', 0] }, 1] },
+          },
+        },
+      ]
+    );
+    console.log("result", result);
+    
+
+    if (result.matchedCount === 0) {
+      throw new Error(`Post with ID ${postId} not found.`);
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Error deleting comment:', error);
+    throw error;
+  }
+};
+
 
 export const PostServices = {
   createPostIntoDB,
@@ -319,8 +389,11 @@ export const PostServices = {
   updatePostInDB,
   deletePostFromDB,
   updatePostLikesInDB,
-  addCommentsInToDB,
   getPremiumPostsFromDB, 
   updatePremiumPost,
   getSearchPosts,
+  addCommentsInToDB,
+  getComments,
+  updateComments,
+  deleteComments,
 };

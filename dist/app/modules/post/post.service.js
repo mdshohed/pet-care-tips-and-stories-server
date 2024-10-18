@@ -23,12 +23,10 @@ const createPostIntoDB = (payload, images) => __awaiter(void 0, void 0, void 0, 
     return result;
 });
 const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("value1", query);
     query = (yield (0, post_utils_1.SearchPostByUserQueryMaker)(query)) || query;
     // Date range search
     query = (yield (0, post_utils_1.SearchPostByDateRangeQueryMaker)(query)) || query;
     query = (yield (0, post_utils_1.SearchPostByCategoryQueryMaker)(query)) || query;
-    console.log("query", query);
     const itemQuery = new QueryBuilder_1.QueryBuilder(post_model_1.Post.find().populate('user').populate('category').populate('comments.comment.user'), query)
         .filter()
         .search(post_constant_1.PostSearchableFields)
@@ -125,7 +123,6 @@ const user_model_1 = require("../User/user.model");
 const updatePostLikesInDBX = (postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const userId = new mongoose_1.Types.ObjectId(payload.userId);
-    console.log("type", payload.type);
     const findPost = yield post_model_1.Post.findById(postId);
     if (!findPost) {
         throw new Error(`Post with ID ${postId} not found.`);
@@ -151,7 +148,6 @@ const updatePostLikesInDBX = (postId, payload) => __awaiter(void 0, void 0, void
 const updatePostLikesInDB = (postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const userId = new mongoose_1.Types.ObjectId(payload.userId);
-    console.log("type", payload.type);
     const findPost = yield post_model_1.Post.findById(postId);
     if (!findPost) {
         throw new Error(`Post with ID ${postId} not found.`);
@@ -185,6 +181,7 @@ const updatePostLikesInDB = (postId, payload) => __awaiter(void 0, void 0, void 
         }
         else {
             const newDownVote = downVote.filter((id) => id.toString() !== userId.toString());
+            // console.log("payload", payload.type, newDownVote, u);
             if (payload.type === "Down") {
                 updateData = {
                     'likes.count': findPost.likes.count + 1,
@@ -217,9 +214,22 @@ const updatePostLikesInDB = (postId, payload) => __awaiter(void 0, void 0, void 
             };
         }
     }
+    console.log("value", updateData);
     const result = yield post_model_1.Post.findByIdAndUpdate(postId, updateData, { new: true });
-    console.log("vote", updateData, result, upVote, downVote);
     return result;
+});
+const deletePostFromDB = (postId) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield post_model_1.Post.findByIdAndDelete(postId);
+    // const deletedPostId = result?._id;
+    // if (deletedPostId) {
+    //   await deleteDocumentFromIndex('posts', deletedPostId.toString());
+    // }
+    return result;
+});
+// comments services operation 
+const getComments = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    // const result = await Post.find( {user: id}).populate('user').populate('category').populate('comments.comment.user');
+    // return result;
 });
 const addCommentsInToDB = (postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -252,13 +262,54 @@ const addCommentsInToDB = (postId, payload) => __awaiter(void 0, void 0, void 0,
         throw error;
     }
 });
-const deletePostFromDB = (postId) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield post_model_1.Post.findByIdAndDelete(postId);
-    // const deletedPostId = result?._id;
-    // if (deletedPostId) {
-    //   await deleteDocumentFromIndex('posts', deletedPostId.toString());
-    // }
-    return result;
+const updateComments = (postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const postObjectId = new mongoose_1.Types.ObjectId(postId);
+        const result = yield post_model_1.Post.updateOne({ _id: postObjectId }, {
+            $set: {
+                [`comments.comment.${payload.index}.text`]: payload.text, // Use array indexing to update the comment's text
+            },
+        });
+        if (result.matchedCount === 0) {
+            throw new Error(`Post with ID ${postId} not found.`);
+        }
+        if (result.modifiedCount === 0) {
+            throw new Error(`Comment at index ${payload.index} could not be updated.`);
+        }
+        return result;
+    }
+    catch (error) {
+        console.error('Error updating comment:', error);
+        throw error;
+    }
+});
+const deleteComments = (postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield post_model_1.Post.updateOne({ _id: new mongoose_1.Types.ObjectId(postId) }, [
+            {
+                $set: {
+                    // Use $concatArrays to reconstruct the array without the comment at the specified index
+                    'comments.comment': {
+                        $concatArrays: [
+                            { $slice: ['$comments.comment', payload.index] }, // Get elements before the index
+                            { $slice: ['$comments.comment', { $add: [payload.index, 1] }, { $size: '$comments.comment' }] } // Get elements after the index
+                        ],
+                    },
+                    // Decrement the comment count
+                    'comments.count': { $subtract: [{ $ifNull: ['$comments.count', 0] }, 1] },
+                },
+            },
+        ]);
+        console.log("result", result);
+        if (result.matchedCount === 0) {
+            throw new Error(`Post with ID ${postId} not found.`);
+        }
+        return result;
+    }
+    catch (error) {
+        console.error('Error deleting comment:', error);
+        throw error;
+    }
 });
 exports.PostServices = {
     createPostIntoDB,
@@ -269,8 +320,11 @@ exports.PostServices = {
     updatePostInDB,
     deletePostFromDB,
     updatePostLikesInDB,
-    addCommentsInToDB,
     getPremiumPostsFromDB,
     updatePremiumPost,
     getSearchPosts,
+    addCommentsInToDB,
+    getComments,
+    updateComments,
+    deleteComments,
 };

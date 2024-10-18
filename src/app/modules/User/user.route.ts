@@ -20,3 +20,4 @@ router.post(
 router.get('/', UserControllers.getAllUsers);
 router.get('/:id', UserControllers.getSingleUser);
 router.put('/:id', UserControllers.updateFriendConnect);
+

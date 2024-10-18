@@ -9,9 +9,14 @@ import { ImageFilesArrayZodSchema } from '../../zod/image.validation';
 
 const router = express.Router();
 
+// router.get(
+//     '/',
+//     auth(USER_ROLE.ADMIN, USER_ROLE.USER),
+//     ProfileController.getMyProfile
+// );
 router.get(
-    '/',
-    auth(USER_ROLE.ADMIN, USER_ROLE.USER),
+    '/:id',
+    // auth(USER_ROLE.ADMIN, USER_ROLE.USER),
     ProfileController.getMyProfile
 );
 

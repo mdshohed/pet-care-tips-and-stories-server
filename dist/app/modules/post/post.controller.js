@@ -111,16 +111,6 @@ const updatePostLikes = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(voi
         data: updatedPost,
     });
 }));
-const addCommentInPost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params;
-    const result = yield post_service_1.PostServices.addCommentsInToDB(id, req.body);
-    (0, sendResponse_1.default)(res, {
-        success: true,
-        statusCode: http_status_1.default.OK,
-        message: 'Comment Added successfully',
-        data: result,
-    });
-}));
 const updatePremiumPost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const updatedPost = yield post_service_1.PostServices.updatePremiumPost(id);
@@ -141,6 +131,48 @@ const deletePost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, 
         data: null,
     });
 }));
+// comments operation
+const addCommentInPost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield post_service_1.PostServices.addCommentsInToDB(id, req.body);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: 'Comment Added successfully',
+        data: result,
+    });
+}));
+const getComments = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const post = yield post_service_1.PostServices.getComments(id);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: 'Comments retrieved successfully',
+        data: post,
+    });
+}));
+const updateComments = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const updatedPost = yield post_service_1.PostServices.updateComments(id, req.body);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: 'comments updated successfully',
+        data: updatedPost,
+    });
+}));
+const deleteComments = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    console.log("req", req.body, id);
+    yield post_service_1.PostServices.deleteComments(id, req.body);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: 'comments deleted successfully',
+        data: null,
+    });
+}));
 exports.PostControllers = {
     createPost,
     getAllPosts,
@@ -151,7 +183,10 @@ exports.PostControllers = {
     updatePost,
     deletePost,
     updatePostLikes,
-    addCommentInPost,
     getPremiumPosts,
     updatePremiumPost,
+    addCommentInPost,
+    getComments,
+    updateComments,
+    deleteComments,
 };

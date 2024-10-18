@@ -6,16 +6,25 @@ import { USER_STATUS } from "../User/user.constant";
 import { TImageFile } from "../../interfaces/image.interface";
 import { TUserProfileUpdate } from "./profile.interface";
 
-const getMyProfile = async (user: JwtPayload) => {
-    const profile = await User.findOne({
-        email: user.email,
-        status: USER_STATUS.ACTIVE
-    });
+// const getMyProfile = async (user: JwtPayload) => {
+//     const profile = await User.findOne({
+//         email: user.email,
+//         status: USER_STATUS.ACTIVE
+//     });
+
+//     if (!profile) {
+//         throw new AppError(httpStatus.NOT_FOUND, "User does not exixts!")
+//     };
+
+//     return profile;
+// };
+
+const getMyProfile = async (id: string) => {
+    const profile = await User.findById(id);
 
     if (!profile) {
         throw new AppError(httpStatus.NOT_FOUND, "User does not exixts!")
     };
-
     return profile;
 };
 

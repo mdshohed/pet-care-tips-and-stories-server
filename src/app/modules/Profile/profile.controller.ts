@@ -5,9 +5,21 @@ import httpStatus from 'http-status';
 import { ProfileServices } from './profile.service';
 import { TImageFile } from '../../interfaces/image.interface';
 
+// const getMyProfile = catchAsync(async (req: Request, res: Response) => {
+//   const user = req.user;
+//   const result = await ProfileServices.getMyProfile(user);
+
+//   sendResponse(res, {
+//     success: true,
+//     statusCode: httpStatus.OK,
+//     message: 'My Profile Retrieved Successfully',
+//     data: result,
+//   });
+// });
+
 const getMyProfile = catchAsync(async (req: Request, res: Response) => {
-  const user = req.user;
-  const result = await ProfileServices.getMyProfile(user);
+  const id = req.params.id;  
+  const result = await ProfileServices.getMyProfile(id);
 
   sendResponse(res, {
     success: true,

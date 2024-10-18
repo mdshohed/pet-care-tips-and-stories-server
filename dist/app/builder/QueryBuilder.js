@@ -12,7 +12,6 @@ class QueryBuilder {
         if ((_a = this.query) === null || _a === void 0 ? void 0 : _a.searchTerm) {
             searchTerm = this.query.searchTerm;
         }
-        console.log("search", this.query.searchTerm);
         // {title: {$regex: searchTerm}}
         // {genre: {$regex: searchTerm}}
         this.modelQuery = this.modelQuery.find({

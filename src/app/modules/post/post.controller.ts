@@ -125,18 +125,7 @@ const updatePostLikes = catchAsync(async (req, res) => {
   });
 });
 
-const addCommentInPost = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  
-  const result = await PostServices.addCommentsInToDB(id, req.body);
-  
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: 'Comment Added successfully',
-    data: result,
-  });
-});
+
 
 const updatePremiumPost = catchAsync(async (req, res) => {
   const { id } = req.params;    
@@ -162,6 +151,58 @@ const deletePost = catchAsync(async (req, res) => {
   });
 });
 
+// comments operation
+
+const addCommentInPost = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await PostServices.addCommentsInToDB(id, req.body);
+  
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Comment Added successfully',
+    data: result,
+  });
+});
+
+const getComments = catchAsync(async (req, res) => {
+  const { id } = req.params;    
+  const post = await PostServices.getComments(id);
+  
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Comments retrieved successfully',
+    data: post,
+  });
+});
+
+const updateComments = catchAsync(async (req, res) => {
+  const id = req.params.id; 
+  const updatedPost = await PostServices.updateComments(id, req.body);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'comments updated successfully',
+    data: updatedPost,
+  });
+});
+
+const deleteComments = catchAsync(async (req, res) => {
+  const id = req.params.id;
+  console.log("req", req.body, id);
+  
+  await PostServices.deleteComments(id, req.body);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'comments deleted successfully',
+    data: null,
+  });
+});
+
 export const PostControllers = {
   createPost,
   getAllPosts,
@@ -172,7 +213,10 @@ export const PostControllers = {
   updatePost,
   deletePost,
   updatePostLikes,
-  addCommentInPost,
   getPremiumPosts,
   updatePremiumPost,
+  addCommentInPost,
+  getComments,
+  updateComments,
+  deleteComments,
 };

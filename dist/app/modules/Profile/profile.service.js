@@ -17,11 +17,18 @@ const user_model_1 = require("../User/user.model");
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const http_status_1 = __importDefault(require("http-status"));
 const user_constant_1 = require("../User/user.constant");
-const getMyProfile = (user) => __awaiter(void 0, void 0, void 0, function* () {
-    const profile = yield user_model_1.User.findOne({
-        email: user.email,
-        status: user_constant_1.USER_STATUS.ACTIVE
-    });
+// const getMyProfile = async (user: JwtPayload) => {
+//     const profile = await User.findOne({
+//         email: user.email,
+//         status: USER_STATUS.ACTIVE
+//     });
+//     if (!profile) {
+//         throw new AppError(httpStatus.NOT_FOUND, "User does not exixts!")
+//     };
+//     return profile;
+// };
+const getMyProfile = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const profile = yield user_model_1.User.findById(id);
     if (!profile) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User does not exixts!");
     }

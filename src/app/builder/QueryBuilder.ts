@@ -14,9 +14,7 @@ export class QueryBuilder<T> {
 
     if (this.query?.searchTerm) {
       searchTerm = this.query.searchTerm as string;
-    }
-    console.log("search", this.query.searchTerm);
-    
+    }    
     // {title: {$regex: searchTerm}}
     // {genre: {$regex: searchTerm}}
     this.modelQuery = this.modelQuery.find({

@@ -17,9 +17,19 @@ const catchAsync_1 = require("../../utils/catchAsync");
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
 const profile_service_1 = require("./profile.service");
+// const getMyProfile = catchAsync(async (req: Request, res: Response) => {
+//   const user = req.user;
+//   const result = await ProfileServices.getMyProfile(user);
+//   sendResponse(res, {
+//     success: true,
+//     statusCode: httpStatus.OK,
+//     message: 'My Profile Retrieved Successfully',
+//     data: result,
+//   });
+// });
 const getMyProfile = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = req.user;
-    const result = yield profile_service_1.ProfileServices.getMyProfile(user);
+    const id = req.params.id;
+    const result = yield profile_service_1.ProfileServices.getMyProfile(id);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,

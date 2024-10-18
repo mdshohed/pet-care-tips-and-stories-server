@@ -21,6 +21,7 @@ router.post(
   validateRequest(PostValidation.createPostValidationSchema),
   PostControllers.createPost
 );
+router.post('/scroll', PostControllers.getAllPosts);
 
 router.get('/admin', PostControllers.getAllPostsForAdmin);
 router.get('/', PostControllers.getAllPosts);
@@ -43,15 +44,29 @@ router.put(
   PostControllers.updatePostLikes
 );
 
-router.put(
-  '/comments/:id',
-  auth(USER_ROLE.USER),
-  PostControllers.addCommentInPost
-);
 
 router.put('/premium/:id', PostControllers.updatePremiumPost);
 
 
 router.delete('/:id', auth(USER_ROLE.USER), PostControllers.deletePost);
+
+// comments operation
+router.post(
+  '/comments/:id',
+  auth(USER_ROLE.USER),
+  PostControllers.addCommentInPost
+);
+router.get(
+  '/comments/:id',
+  PostControllers.getComments
+);
+router.put(
+  '/comments/:id',
+  PostControllers.updateComments
+);
+router.put(
+  '/comments/delete/:id',
+  PostControllers.deleteComments
+);
 
 export const PostRoutes = router;
