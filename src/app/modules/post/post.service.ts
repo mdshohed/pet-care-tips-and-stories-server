@@ -222,7 +222,7 @@ const updatePostLikesInDB = async (postId: string, payload: { userId: string, ty
     }
     else{
       const newDownVote = downVote.filter((id: any) => id.toString() !== userId.toString());
-      // console.log("payload", payload.type, newDownVote, u);
+      // console.log("payload", payload.type, newDownVote);
       
       if(payload.type==="Down"){
         updateData = {

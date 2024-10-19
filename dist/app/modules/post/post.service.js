@@ -181,7 +181,7 @@ const updatePostLikesInDB = (postId, payload) => __awaiter(void 0, void 0, void 
         }
         else {
             const newDownVote = downVote.filter((id) => id.toString() !== userId.toString());
-            // console.log("payload", payload.type, newDownVote, u);
+            // console.log("payload", payload.type, newDownVote);
             if (payload.type === "Down") {
                 updateData = {
                     'likes.count': findPost.likes.count + 1,
