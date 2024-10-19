@@ -15,7 +15,7 @@ First, you need to clone the project repository from your version control platfo
 Open your terminal and execute the following command:
 
 ```bash
-git clone https://github.com/mdshohed/express-typescript-mongoose-server-template.git
+git clone https://github.com/mdshohed/pet-care-tips-and-stories-server.git
 ```
 
 ## **2. Navigate to the Project Directory**
@@ -23,7 +23,7 @@ git clone https://github.com/mdshohed/express-typescript-mongoose-server-templat
 Once the repository is cloned, navigate to the project directory:
 
 ```bash
-cd express-typescript-mongoose-server-template
+cd pet-care-tips-and-stories-server
 ```
 
 ## **3. Install All Packages**
