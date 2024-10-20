@@ -19,8 +19,9 @@ const createPostIntoDB = (payload, images) => __awaiter(void 0, void 0, void 0, 
     payload.images = itemImages.map((image) => image.path);
     payload.likes = { count: 0, user: [], upVote: [], downVote: [] };
     payload.comments = { count: 0, comment: [] };
-    const result = yield post_model_1.Post.create(payload);
-    return result;
+    console.log("post", payload);
+    // const result = await Post.create(payload);
+    // return result;
 });
 const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
     query = (yield (0, post_utils_1.SearchPostByUserQueryMaker)(query)) || query;
@@ -86,15 +87,37 @@ const getMyPostFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield post_model_1.Post.find({ user: id }).populate('user').populate('category').populate('comments.comment.user');
     return result;
 });
-const updatePostInDB = (postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield post_model_1.Post.findByIdAndUpdate(postId, payload, { new: true });
-    // if (result) {
-    //   await addDocumentToIndex(result, 'posts');
-    // } else {
-    //   throw new Error(`Post with ID ${postId} not found.`);
-    // }
+// const updatePostInDB = async (postId: string, payload: TPost) => {
+//   const result = await Post.findByIdAndUpdate(postId, payload, { new: true });
+//   // if (result) {
+//   //   await addDocumentToIndex(result, 'posts');
+//   // } else {
+//   //   throw new Error(`Post with ID ${postId} not found.`);
+//   // }
+//   if(!result){
+//     throw new Error(`Post with ID ${postId} not found.`);
+//   }
+//   return result;
+// };
+const updatePostInDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const post = yield post_model_1.Post.findById(id);
+    if (!post) {
+        throw new Error(`Post with Id ${id} not found!`);
+    }
+    let updatePost = post === null || post === void 0 ? void 0 : post.premiumDetails;
+    if (post.premiumDetails) {
+        updatePost = {
+            isPending: !((_a = post.premiumDetails) === null || _a === void 0 ? void 0 : _a.isPending),
+            subscriptionFee: post.premiumDetails.subscriptionFee,
+            subscribedUser: (_b = post.premiumDetails) === null || _b === void 0 ? void 0 : _b.subscribedUser
+        };
+    }
+    console.log("result", payload);
+    const result = yield post_model_1.Post.findByIdAndUpdate(id, payload, { new: true });
+    console.log("result2", result);
     if (!result) {
-        throw new Error(`Post with ID ${postId} not found.`);
+        throw new Error(`Post update Error.`);
     }
     return result;
 });

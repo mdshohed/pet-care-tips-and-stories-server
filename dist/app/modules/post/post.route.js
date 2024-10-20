@@ -16,7 +16,7 @@ const user_constant_1 = require("../User/user.constant");
 const bodyParser_1 = require("../../middlewares/bodyParser");
 const router = express_1.default.Router();
 router.post('/', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), multer_config_1.multerUpload.fields([{ name: 'itemImages' }]), (0, validateImageFileRequest_1.default)(image_validation_1.ImageFilesArrayZodSchema), bodyParser_1.parseBody, (0, validateRequest_1.default)(post_validation_1.PostValidation.createPostValidationSchema), post_controller_1.PostControllers.createPost);
-router.post('/scroll', post_controller_1.PostControllers.getAllPosts);
+router.get('/scroll', post_controller_1.PostControllers.getAllPosts);
 router.get('/admin', post_controller_1.PostControllers.getAllPostsForAdmin);
 router.get('/', post_controller_1.PostControllers.getAllPosts);
 router.get('/search-post', post_controller_1.PostControllers.getSearchPostFromDB);

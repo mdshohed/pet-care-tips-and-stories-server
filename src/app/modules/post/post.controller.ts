@@ -34,8 +34,7 @@ const getAllPostsForAdmin = catchAsync(async (req, res) => {
   });
 });
 
-const getAllPosts = catchAsync(async (req, res) => {
-  
+const getAllPosts = catchAsync(async (req, res) => {  
   const post = await PostServices.getAllPostsFromDB(req.query);
 
   sendResponse(res, {

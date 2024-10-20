@@ -16,8 +16,10 @@ const createPostIntoDB = async (payload: TPost, images: TImageFiles) => {
   payload.images = itemImages.map((image) => image.path);
   payload.likes = {count: 0, user: [], upVote: [], downVote: []}; 
   payload.comments = { count: 0, comment: []}
-  const result = await Post.create(payload);
-  return result;
+  console.log("post", payload);
+  
+  // const result = await Post.create(payload);
+  // return result;
 };
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
@@ -109,15 +111,41 @@ const getMyPostFromDB = async (id: string) => {
   return result;
 };
 
-const updatePostInDB = async (postId: string, payload: TPost) => {
-  const result = await Post.findByIdAndUpdate(postId, payload, { new: true });
-  // if (result) {
-  //   await addDocumentToIndex(result, 'posts');
-  // } else {
-  //   throw new Error(`Post with ID ${postId} not found.`);
-  // }
-  if(!result){
-    throw new Error(`Post with ID ${postId} not found.`);
+// const updatePostInDB = async (postId: string, payload: TPost) => {
+//   const result = await Post.findByIdAndUpdate(postId, payload, { new: true });
+//   // if (result) {
+//   //   await addDocumentToIndex(result, 'posts');
+//   // } else {
+//   //   throw new Error(`Post with ID ${postId} not found.`);
+//   // }
+//   if(!result){
+//     throw new Error(`Post with ID ${postId} not found.`);
+//   }
+//   return result;
+// };
+const updatePostInDB = async (id: string, payload: any) => {
+  const post = await Post.findById(id);
+  if (!post) {
+    throw new Error(`Post with Id ${id} not found!`);
+  }
+  let updatePost = post?.premiumDetails;
+  
+  if(post.premiumDetails){
+     updatePost = {
+      isPending: !post.premiumDetails?.isPending, 
+      subscriptionFee: post.premiumDetails.subscriptionFee,
+      subscribedUser: post.premiumDetails?.subscribedUser
+    }
+  }
+
+  const result = await Post.findByIdAndUpdate(
+    id, 
+    payload, 
+    { new: true }
+  );
+  
+  if (!result) {
+    throw new Error(`Post update Error.`);
   }
   return result;
 };

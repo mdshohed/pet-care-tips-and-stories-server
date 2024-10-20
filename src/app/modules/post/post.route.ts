@@ -21,7 +21,7 @@ router.post(
   validateRequest(PostValidation.createPostValidationSchema),
   PostControllers.createPost
 );
-router.post('/scroll', PostControllers.getAllPosts);
+router.get('/scroll', PostControllers.getAllPosts);
 
 router.get('/admin', PostControllers.getAllPostsForAdmin);
 router.get('/', PostControllers.getAllPosts);
