@@ -21,10 +21,11 @@ router.post(
   validateRequest(PostValidation.createPostValidationSchema),
   PostControllers.createPost
 );
-router.get('/scroll', PostControllers.getAllPosts);
+router.get('/scroll', PostControllers.getAllPostsWithScroll);
 
 router.get('/admin', PostControllers.getAllPostsForAdmin);
 router.get('/', PostControllers.getAllPosts);
+// router.get('/', PostControllers.getAllPostsWithScroll);
 router.get('/search-post', PostControllers.getSearchPostFromDB);
 router.get('/premium', PostControllers.getPremiumPosts);
 

@@ -19,9 +19,8 @@ const createPostIntoDB = (payload, images) => __awaiter(void 0, void 0, void 0, 
     payload.images = itemImages.map((image) => image.path);
     payload.likes = { count: 0, user: [], upVote: [], downVote: [] };
     payload.comments = { count: 0, comment: [] };
-    console.log("post", payload);
-    // const result = await Post.create(payload);
-    // return result;
+    const result = yield post_model_1.Post.create(payload);
+    return result;
 });
 const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
     query = (yield (0, post_utils_1.SearchPostByUserQueryMaker)(query)) || query;
@@ -35,15 +34,21 @@ const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function*
         // .paginate()
         .fields();
     const result = yield itemQuery.modelQuery;
-    // const result = await Post.find({
-    //   $or: [
-    //     { isPremium: false },
-    //     { isPremium: true, 'premiumDetails.isPending': false }
-    //   ]
-    // })
-    //   .populate('user')
-    //   .populate('category');
-    // console.log("value", query);
+    const newResult = result.filter((post) => { var _a; return (post === null || post === void 0 ? void 0 : post.isPremium) === false || ((_a = post.premiumDetails) === null || _a === void 0 ? void 0 : _a.isPending) === false; });
+    return newResult;
+});
+const getAllPostsWithScrollFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    query = (yield (0, post_utils_1.SearchPostByUserQueryMaker)(query)) || query;
+    // Date range search
+    query = (yield (0, post_utils_1.SearchPostByDateRangeQueryMaker)(query)) || query;
+    query = (yield (0, post_utils_1.SearchPostByCategoryQueryMaker)(query)) || query;
+    const itemQuery = new QueryBuilder_1.QueryBuilder(post_model_1.Post.find().populate('user').populate('category').populate('comments.comment.user'), query)
+        .filter()
+        .search(post_constant_1.PostSearchableFields)
+        .sort()
+        .paginate()
+        .fields();
+    const result = yield itemQuery.modelQuery;
     const newResult = result.filter((post) => { var _a; return (post === null || post === void 0 ? void 0 : post.isPremium) === false || ((_a = post.premiumDetails) === null || _a === void 0 ? void 0 : _a.isPending) === false; });
     return newResult;
 });
@@ -113,9 +118,7 @@ const updatePostInDB = (id, payload) => __awaiter(void 0, void 0, void 0, functi
             subscribedUser: (_b = post.premiumDetails) === null || _b === void 0 ? void 0 : _b.subscribedUser
         };
     }
-    console.log("result", payload);
     const result = yield post_model_1.Post.findByIdAndUpdate(id, payload, { new: true });
-    console.log("result2", result);
     if (!result) {
         throw new Error(`Post update Error.`);
     }
@@ -337,6 +340,7 @@ const deleteComments = (postId, payload) => __awaiter(void 0, void 0, void 0, fu
 exports.PostServices = {
     createPostIntoDB,
     getAllPostsFromDB,
+    getAllPostsWithScrollFromDB,
     getAllPostsForAdminFromDB,
     getPostFromDB,
     getMyPostFromDB,

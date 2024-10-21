@@ -16,10 +16,9 @@ const createPostIntoDB = async (payload: TPost, images: TImageFiles) => {
   payload.images = itemImages.map((image) => image.path);
   payload.likes = {count: 0, user: [], upVote: [], downVote: []}; 
   payload.comments = { count: 0, comment: []}
-  console.log("post", payload);
   
-  // const result = await Post.create(payload);
-  // return result;
+  const result = await Post.create(payload);
+  return result;
 };
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
@@ -41,21 +40,33 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
     .fields();
 
   const result = await itemQuery.modelQuery;
-
-  // const result = await Post.find({
-  //   $or: [
-  //     { isPremium: false },
-  //     { isPremium: true, 'premiumDetails.isPending': false }
-  //   ]
-  // })
-  //   .populate('user')
-  //   .populate('category');
-  // console.log("value", query);
-
   const newResult = result.filter((post)=>post?.isPremium===false||post.premiumDetails?.isPending===false)
-
   return newResult;
 };
+
+const getAllPostsWithScrollFromDB = async (query: Record<string, unknown>) => {
+
+  query = (await SearchPostByUserQueryMaker(query)) || query;
+  // Date range search
+  query = (await SearchPostByDateRangeQueryMaker(query)) || query;
+
+  query = (await SearchPostByCategoryQueryMaker(query)) || query;
+
+  const itemQuery = new QueryBuilder(
+    Post.find().populate('user').populate('category').populate('comments.comment.user'),
+    query
+  )
+    .filter()
+    .search(PostSearchableFields)
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await itemQuery.modelQuery;
+  const newResult = result.filter((post)=>post?.isPremium===false||post.premiumDetails?.isPending===false)
+  return newResult;
+};
+
 const getAllPostsForAdminFromDB = async () => {
   const result = await Post.find().populate('user').populate('category').populate('comments.comment.user')
   return result;
@@ -411,6 +422,7 @@ const deleteComments = async (postId: string, payload: { index: number }) => {
 export const PostServices = {
   createPostIntoDB,
   getAllPostsFromDB,
+  getAllPostsWithScrollFromDB,
   getAllPostsForAdminFromDB,
   getPostFromDB,
   getMyPostFromDB,

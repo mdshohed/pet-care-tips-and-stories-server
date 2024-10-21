@@ -48,6 +48,15 @@ const getAllPosts = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0,
         data: post,
     });
 }));
+const getAllPostsWithScroll = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const post = yield post_service_1.PostServices.getAllPostsWithScrollFromDB(req.query);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: 'Post retrieved successfully',
+        data: post,
+    });
+}));
 const getSearchPostFromDB = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { searchTerm, limit } = req.query;
     const numberLimit = Number(limit) || 10;
@@ -164,7 +173,6 @@ const updateComments = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void
 }));
 const deleteComments = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
-    console.log("req", req.body, id);
     yield post_service_1.PostServices.deleteComments(id, req.body);
     (0, sendResponse_1.default)(res, {
         success: true,
@@ -176,6 +184,7 @@ const deleteComments = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void
 exports.PostControllers = {
     createPost,
     getAllPosts,
+    getAllPostsWithScroll,
     getAllPostsForAdmin,
     getSearchPostFromDB,
     getPost,

@@ -45,6 +45,17 @@ const getAllPosts = catchAsync(async (req, res) => {
   });
 });
 
+const getAllPostsWithScroll = catchAsync(async (req, res) => {  
+  const post = await PostServices.getAllPostsWithScrollFromDB(req.query);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Post retrieved successfully',
+    data: post,
+  });
+});
+
 const getSearchPostFromDB = catchAsync(async (req, res) => {
   const { searchTerm, limit } = req.query;
 
@@ -190,7 +201,6 @@ const updateComments = catchAsync(async (req, res) => {
 
 const deleteComments = catchAsync(async (req, res) => {
   const id = req.params.id;
-  console.log("req", req.body, id);
   
   await PostServices.deleteComments(id, req.body);
 
@@ -205,6 +215,7 @@ const deleteComments = catchAsync(async (req, res) => {
 export const PostControllers = {
   createPost,
   getAllPosts,
+  getAllPostsWithScroll,
   getAllPostsForAdmin,
   getSearchPostFromDB,
   getPost,
