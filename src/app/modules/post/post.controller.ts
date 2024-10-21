@@ -151,7 +151,10 @@ const updatePremiumPost = catchAsync(async (req, res) => {
 
 const deletePost = catchAsync(async (req, res) => {
   const { id } = req.params;
+  console.log("id", id);
+  
   await PostServices.deletePostFromDB(id);
+
 
   sendResponse(res, {
     success: true,

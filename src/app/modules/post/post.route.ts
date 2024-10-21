@@ -48,8 +48,7 @@ router.put(
 
 router.put('/premium/:id', PostControllers.updatePremiumPost);
 
-
-router.delete('/:id', auth(USER_ROLE.USER), PostControllers.deletePost);
+router.put('/delete/:id', auth(USER_ROLE.USER), PostControllers.deletePost);
 
 // comments operation
 router.post(

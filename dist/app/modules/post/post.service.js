@@ -246,10 +246,9 @@ const updatePostLikesInDB = (postId, payload) => __awaiter(void 0, void 0, void 
 });
 const deletePostFromDB = (postId) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield post_model_1.Post.findByIdAndDelete(postId);
-    // const deletedPostId = result?._id;
-    // if (deletedPostId) {
-    //   await deleteDocumentFromIndex('posts', deletedPostId.toString());
-    // }
+    if (!result) {
+        throw new Error('Delete Error!');
+    }
     return result;
 });
 // comments services operation 

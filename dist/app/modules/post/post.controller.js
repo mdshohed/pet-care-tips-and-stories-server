@@ -132,6 +132,7 @@ const updatePremiumPost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(v
 }));
 const deletePost = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
+    console.log("id", id);
     yield post_service_1.PostServices.deletePostFromDB(id);
     (0, sendResponse_1.default)(res, {
         success: true,
